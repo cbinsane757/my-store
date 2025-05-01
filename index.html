@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sadwal's Best Store</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1f3b72, #4e73df);
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    header {
+      background-color: #0e1a40;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      border-bottom: 4px solid #ffcb05;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+
+    header h1 {
+      font-size: 36px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #ffcb05;
+    }
+
+    .search-bar {
+      margin-top: 10px;
+    }
+
+    .search-bar input[type="text"] {
+      padding: 10px 15px;
+      border: 2px solid #ffcb05;
+      border-radius: 25px;
+      width: 250px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    .search-bar button {
+      padding: 10px 20px;
+      border: none;
+      background-color: #ffcb05;
+      color: #0e1a40;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .product-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 25px;
+      padding: 30px;
+    }
+
+    .product-card {
+      background: linear-gradient(to top right, #ffffff, #f0f0f5);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      transition: transform 0.3s;
+    }
+
+    .product-card:hover {
+      transform: translateY(-8px);
+    }
+
+    .product-image img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      border-bottom: 3px solid #4e73df;
+    }
+
+    .product-info {
+      padding: 15px;
+      text-align: center;
+    }
+
+    .product-info h3 {
+      font-size: 18px;
+      color: #1f3b72;
+      margin: 10px 0;
+    }
+
+    .product-info p {
+      margin: 10px 0;
+      font-size: 16px;
+    }
+
+    .price {
+      font-weight: bold;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .price del {
+      color: #dc3545;
+      font-size: 14px;
+      margin-right: 5px;
+    }
+
+    .price strong {
+      color: #28a745;
+    }
+
+    .btn {
+      background-color: #1f3b72;
+      color: #fff;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 25px;
+      font-size: 16px;
+      margin-top: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #4e73df;
+      transform: scale(1.05);
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .product-card {
+      animation: popIn 0.5s ease-out;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>ᴰᴵⱽᴵᴺᴱ Products</h1>
+    <div class="search-bar">
+      <input type="text" placeholder="Search products...">
+      <button>Search</button>
+    </div>
+  </header>
+
+  <div class="product-container">
+
+    <!-- Product 1 -->
+    <div class="product-card">
+      <div class="product-image">
+        <img src="https://i.ibb.co/93cJg3mZ/d21f37610839bb71e35190a4ed961704579c4906-574-1024.jpg" alt="Product 1">
+      </div>
+      <div class="product-info">
+        <h3>Abdullah Ki Kachi <span style="color: #DAA520;">(Limited Edition)</span></h3>
+        <p class="price"><del>RS150,000</del> <strong>RS150</strong> <span style="color: orange;">(99.99% OFF)</span></p>
+        <button class="btn" onclick="window.location.href='buy.html'">Buy Now</button>
+      </div>
+    </div>
+
+    <!-- Product 2 -->
+    <div class="product-card">
+      <div class="product-image">
+        <img src="https://i.ibb.co/S7GL2ybP/ab.jpg" alt="Product 2">
+      </div>
+      <div class="product-info">
+        <h3>Insane's Kacha <span style="color: #696969;">(Special Edition)</span></h3>
+        <p class="price"><del>RS20,000</del> <strong>RS150</strong> <span style="color: orange;">(99.99% OFF)</span></p>
+        <button class="btn" onclick="window.location.href='buy.html'">Buy Now</button>
+      </div>
+    </div>
+
+    <!-- Product 3 -->
+    <div class="product-card">
+      <div class="product-image">
+        <img src="https://i.ibb.co/tPLbmTgQ/am.jpg" alt="Product 3">
+      </div>
+      <div class="product-info">
+        <h3>Amaan Ki Kachi <span style="color: #808000;">(Only 1 in Solar System)</span></h3>
+        <p class="price"><del>RS50 Million</del> <strong>RS150</strong> <span style="color: orange;">(99.99% OFF)</span></p>
+        <button class="btn" onclick="window.location.href='buy.html'">Buy Now</button>
+      </div>
+    </div>
+
+    <!-- Product 4 -->
+    <div class="product-card">
+      <div class="product-image">
+        <img src="https://i.ibb.co/KpBpzm4W/c2.jpg" alt="Product 4">
+      </div>
+      <div class="product-info">
+        <h3><span style="color: #0000FF;">DUREX Condom (Special Edition)</span></h3>
+        <p class="price"><del>RS5000</del> <strong>RS150</strong> <span style="color: orange;">(99.99% OFF)</span></p>
+        <button class="btn" onclick="window.location.href='buy.html'">Buy Now</button>
+
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
