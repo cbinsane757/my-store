@@ -52,6 +52,30 @@
       font-size: 16px;
     }
 
+    .auth-buttons, .logout-buttons {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .auth-btn {
+      padding: 10px 16px;
+      background-color: #ffcb05;
+      color: #0e1a40;
+      border-radius: 25px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .auth-btn:hover {
+      background-color: #e6b800;
+    }
+
     .product-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -65,6 +89,7 @@
       overflow: hidden;
       box-shadow: 0 6px 20px rgba(0,0,0,0.15);
       transition: transform 0.3s;
+      animation: popIn 0.5s ease-out;
     }
 
     .product-card:hover {
@@ -131,10 +156,6 @@
       from { opacity: 0; transform: translateY(30px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
-    .product-card {
-      animation: popIn 0.5s ease-out;
-    }
   </style>
 </head>
 <body>
@@ -145,10 +166,20 @@
       <input type="text" placeholder="Search products...">
       <button>Search</button>
     </div>
+
+    <!-- Login/Sign Up/Logout Buttons -->
+    <div class="auth-buttons">
+      <button class="auth-btn" onclick="window.location.href='login.html'">Login</button>
+      <button class="auth-btn" onclick="window.location.href='signup.html'">Sign Up</button>
+    </div>
+
+    <div class="logout-buttons" style="display: none;">
+      <span style="color: white; font-weight: bold;">Welcome!</span>
+      <button class="auth-btn" onclick="logout()">Logout</button>
+    </div>
   </header>
 
   <div class="product-container">
-
     <!-- Product 1 -->
     <div class="product-card">
       <div class="product-image">
@@ -184,21 +215,23 @@
         <button class="btn" onclick="window.location.href='buy.html'">Buy Now</button>
       </div>
     </div>
-
-    <!-- Product 4 -->
-    <div class="product-card">
-      <div class="product-image">
-        <img src="https://i.ibb.co/KpBpzm4W/c2.jpg" alt="Product 4">
-      </div>
-      <div class="product-info">
-        <h3><span style="color: #0000FF;">DUREX Condom (Special Edition)</span></h3>
-        <p class="price"><del>RS5000</del> <strong>RS150</strong> <span style="color: orange;">(99.99% OFF)</span></p>
-        <button class="btn" onclick="window.location.href='buy.html'">Buy Now</button>
-
-      </div>
-    </div>
-
   </div>
+
+  <script>
+    function logout() {
+      localStorage.removeItem('isLoggedIn');
+      updateAuthUI();
+      alert("You have logged out.");
+    }
+
+    function updateAuthUI() {
+      const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
+      document.querySelector('.auth-buttons').style.display = loggedIn ? 'none' : 'flex';
+      document.querySelector('.logout-buttons').style.display = loggedIn ? 'flex' : 'none';
+    }
+
+    window.onload = updateAuthUI;
+  </script>
 
 </body>
 </html>
