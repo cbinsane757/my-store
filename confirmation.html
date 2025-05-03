@@ -19,10 +19,22 @@
       text-align: center;
       font-size: 28px;
       border-bottom: 4px solid #ffcb05;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo {
+      width: 117px;
+      height: 100px;
+      margin-right: 20px;
+      margin-left: 40px;
+      margin-top: 2px;
+      cursor: pointer;
     }
 
     .container {
-      max-width: 500px;
+      max-width: 600px;
       margin: 40px auto;
       background: #1a1a2e;
       padding: 30px;
@@ -38,7 +50,7 @@
 
     p {
       font-size: 18px;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
     }
 
     .btn {
@@ -69,24 +81,85 @@
       text-decoration: underline;
       color: #fff;
     }
+
+    .product-summary {
+      margin-top: 20px;
+      background-color: #2a2a3d;
+      padding: 15px;
+      border-radius: 10px;
+    }
+
+    .product-summary h3 {
+      color: #ffcb05;
+      margin-top: 0;
+    }
+
+    .product-summary p {
+      margin: 5px 0;
+    }
+
+    .total {
+      font-weight: bold;
+      font-size: 20px;
+      color: #ffcb05;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
 
-  <header>Order Confirmation - ᴰᴵⱽᴵᴺᴱ Products</header>
+  <header>
+    <img src="https://i.ibb.co/YwggSYs/image.png" alt="Logo" class="logo" onclick="window.location.href='index.html'">
+    Order Confirmation - ᴰᴵⱽᴵᴺᴱ Products
+  </header>
 
   <div class="container">
     <h2>Thank You for Your Order!</h2>
-    <p>Your order has been successfully placed. Our team will process it shortly. You will receive a confirmation email soon.</p>
-    
+    <p>Your order has been successfully placed. You will receive a confirmation email soon.</p>
+
     <h3>Order Summary</h3>
-    <p><strong>Product:</strong> Abdullah Ki Kachi (Limited Edition)</p>
-    <p><strong>Price:</strong> RS150</p>
-    <p><strong>Payment Method:</strong> Cash on Delivery</p>
+    <div class="product-summary" id="summaryContainer">
+      <!-- Product summary will be inserted here -->
+    </div>
+
+    <p><strong>Payment Method:</strong> <span id="paymentMethod">...</span></p>
+    <p><strong>Shipping Address:</strong> <span id="address">...</span></p>
 
     <button class="btn" onclick="window.location.href='index.html'">Back to Products</button>
     <a href="index.html" class="back-link">← Back to Products</a>
   </div>
+
+  <script>
+    window.onload = function () {
+      const orderSummary = JSON.parse(localStorage.getItem('orderSummary')) || [];
+      const paymentMethod = localStorage.getItem('paymentMethod') || 'Cash on Delivery';
+      const address = localStorage.getItem('address') || 'Not Provided';
+
+      let total = 0;
+      const container = document.getElementById('summaryContainer');
+
+      orderSummary.forEach(item => {
+        const productDiv = document.createElement('div');
+        productDiv.innerHTML = `
+          <p><strong>${item.name}</strong></p>
+          <p>Quantity: ${item.quantity}</p>
+          <p>Price per unit: RS${item.pricePerUnit}</p>
+          <p>Subtotal: RS${item.total}</p>
+          <hr style="border: 0.5px solid #555;">
+        `;
+        total += item.total;
+        container.appendChild(productDiv);
+      });
+
+      const totalEl = document.createElement('p');
+      totalEl.className = 'total';
+      totalEl.textContent = `Total: RS${total}`;
+      container.appendChild(totalEl);
+
+      document.getElementById('paymentMethod').textContent = paymentMethod;
+      document.getElementById('address').textContent = address;
+    };
+  </script>
 
 </body>
 </html>
