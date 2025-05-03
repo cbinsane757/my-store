@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Cart</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1f3b72, #4e73df);
+      margin: 0;
+      padding: 0;
+      color: #fff;
+    }
+
+    header {
+      background-color: #0e1a40;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+      border-bottom: 3px solid #ffcb05;
+    }
+
+    .cart-container {
+      padding: 30px;
+      max-width: 900px;
+      margin: auto;
+      background: #1a1a2e;
+      border-radius: 15px;
+      margin-top: 40px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.4);
+    }
+
+    .cart-item {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #444;
+      padding: 15px 0;
+    }
+
+    .cart-item img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      margin-right: 15px;
+      border-radius: 10px;
+    }
+
+    .cart-item label {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .cart-item .name {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .cart-item .price {
+      font-size: 16px;
+      margin-left: auto;
+      color: #ffcb05;
+    }
+
+    .btn {
+      background-color: #ffcb05;
+      color: #0e1a40;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 25px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 20px;
+      margin-right: 10px;
+    }
+
+    .btn:hover {
+      background-color: #ffd700;
+    }
+
+    .empty-cart {
+      text-align: center;
+      padding: 50px 20px;
+    }
+
+    .empty-cart img {
+      width: 120px;
+      margin-bottom: 20px;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>Your Shopping Cart</header>
+
+  <div class="cart-container" id="cartContainer">
+    <!-- JS will populate cart here -->
+  </div>
+
+  <script>
+    const productsData = {
+      'Abdullah Ki Kachi': 'https://i.ibb.co/93cJg3mZ/d21f37610839bb71e35190a4ed961704579c4906-574-1024.jpg',
+      "Insane's Kacha (Special Edition)": 'https://i.ibb.co/S7GL2ybP/ab.jpg',
+      'Amaan Ki Kachi (Only 1 in Solar System)': 'https://i.ibb.co/tPLbmTgQ/am.jpg'
+    };
+
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const cartContainer = document.getElementById('cartContainer');
+
+    function renderCart() {
+      cartContainer.innerHTML = '';
+
+      if (cart.length === 0) {
+        cartContainer.innerHTML = `
+          <div class="empty-cart">
+            <img src="https://cdn-icons-png.flaticon.com/512/2038/2038854.png" alt="Empty Cart">
+            <h2>Your cart is empty!</h2>
+            <p>Go back and add some products to check out.</p>
+          </div>`;
+        return;
+      }
+
+      cart.forEach((item, index) => {
+        const image = productsData[item.name] || 'https://via.placeholder.com/60';
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'cart-item';
+        itemDiv.innerHTML = `
+          <label>
+            <input type="checkbox" class="select-item" data-index="${index}">
+            <img src="${image}" alt="${item.name}">
+            <span class="name">${item.name}</span>
+          </label>
+          <span class="price">RS${item.price}</span>
+        `;
+        cartContainer.appendChild(itemDiv);
+      });
+
+      // Add buttons
+      const actionsDiv = document.createElement('div');
+      actionsDiv.className = 'actions';
+      actionsDiv.innerHTML = `
+        <button class="btn" onclick="removeSelected()">Remove Selected</button>
+        <button class="btn" onclick="checkoutSelected()">Checkout Selected</button>
+      `;
+      cartContainer.appendChild(actionsDiv);
+    }
+
+    function removeSelected() {
+      const checkboxes = document.querySelectorAll('.select-item:checked');
+      const indexesToRemove = Array.from(checkboxes).map(cb => parseInt(cb.dataset.index));
+      const newCart = cart.filter((_, i) => !indexesToRemove.includes(i));
+      localStorage.setItem('cart', JSON.stringify(newCart));
+      location.reload();
+    }
+
+    function checkoutSelected() {
+  const checkboxes = document.querySelectorAll('.select-item:checked');
+  const selectedItems = Array.from(checkboxes).map(cb => cart[parseInt(cb.dataset.index)]);
+  
+  if (selectedItems.length === 0) {
+    alert("Please select at least one item to checkout.");
+    return;
+  }
+
+  // Save selected items separately for checkout page
+  localStorage.setItem('checkoutItems', JSON.stringify(selectedItems));
+
+  // Redirect to checkout page (buy.html)
+  window.location.href = 'buy.html';
+}
+
+    renderCart();
+  </script>
+</body>
+</html>
