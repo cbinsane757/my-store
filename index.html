@@ -3,6 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <title>Sadwal's Best Store</title>
+
+  <!-- Firebase & Google Identity Services -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+
+  <meta name="google-signin-client_id" content="749092459183-ot7efihdi1n8l8m4vbikth6f1jeoq1ed.apps.googleusercontent.com">
+
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -19,37 +28,49 @@
       text-align: center;
       border-bottom: 4px solid #ffcb05;
       box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     header h1 {
       font-size: 36px;
-      letter-spacing: 2px;
+      letter-spacing: 1px;
       text-transform: uppercase;
       color: #ffcb05;
+      flex: 1;
+    }
+
+    .logo {
+      width: 117px;
+      height: 100px;
+      margin-left: 40px;
     }
 
     .search-bar {
-      margin-top: 10px;
+      width: 400px;
+      height: 50px;
+      margin-left: 4px;
     }
 
     .search-bar input[type="text"] {
       padding: 10px 15px;
       border: 2px solid #ffcb05;
       border-radius: 25px;
-      width: 250px;
+      width: 200px;
       font-size: 16px;
       outline: none;
     }
 
     .search-bar button {
-      padding: 10px 20px;
+      padding: 15px 17px;
       border: none;
       background-color: #ffcb05;
       color: #0e1a40;
       border-radius: 25px;
       cursor: pointer;
       font-weight: bold;
-      font-size: 16px;
+      font-size: 14px;
     }
 
     .auth-buttons, .logout-buttons {
@@ -69,11 +90,6 @@
       font-size: 16px;
       border: none;
       cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    .auth-btn:hover {
-      background-color: #e6b800;
     }
 
     .product-container {
@@ -86,10 +102,8 @@
     .product-card {
       background: linear-gradient(to top right, #ffffff, #f0f0f5);
       border-radius: 12px;
-      overflow: hidden;
       box-shadow: 0 6px 20px rgba(0,0,0,0.15);
       transition: transform 0.3s;
-      animation: popIn 0.5s ease-out;
     }
 
     .product-card:hover {
@@ -135,91 +149,85 @@
       color: #28a745;
     }
 
+    .btn, .btn-cart {
+      border-radius: 25px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+      padding: 10px 20px;
+    }
+
     .btn {
       background-color: #1f3b72;
       color: #fff;
-      padding: 12px 20px;
       border: none;
-      border-radius: 25px;
-      font-size: 16px;
-      margin-top: 10px;
-      cursor: pointer;
-      transition: all 0.3s ease;
     }
 
     .btn:hover {
       background-color: #4e73df;
-      transform: scale(1.05);
     }
 
-    @keyframes popIn {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
+    .btn-cart {
+      background-color: transparent;
+      border: 2px solid #ffcb05;
+      color: #ffcb05;
+    }
+
+    .btn-cart:hover {
+      background-color: #ffcb05;
+      color: #0e1a40;
+    }
+
+    .popup {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .popup-content {
+      background-color: #1a1a2e;
+      padding: 30px;
+      border-radius: 15px;
+      color: #ffcb05;
+      text-align: center;
+      max-width: 500px;
+    }
+
+    .popup .btn {
+      background-color: #ffcb05;
+      color: #0e1a40;
+      width: 100%;
+      border: none;
     }
   </style>
-</head>
-<body>
-
-  <header>
-    <h1>ᴰᴵⱽᴵᴺᴱ Products</h1>
-    <div class="search-bar">
-      <input type="text" placeholder="Search products...">
-      <button>Search</button>
-    </div>
-
-    <!-- Login/Sign Up/Logout Buttons -->
-    <div class="auth-buttons">
-      <button class="auth-btn" onclick="window.location.href='login.html'">Login</button>
-      <button class="auth-btn" onclick="window.location.href='signup.html'">Sign Up</button>
-    </div>
-
-    <div class="logout-buttons" style="display: none;">
-      <span style="color: white; font-weight: bold;">Welcome!</span>
-      <button class="auth-btn" onclick="logout()">Logout</button>
-    </div>
-  </header>
-
-  <div class="product-container">
-    <!-- Product 1 -->
-    <div class="product-card">
-      <div class="product-image">
-        <img src="https://i.ibb.co/93cJg3mZ/d21f37610839bb71e35190a4ed961704579c4906-574-1024.jpg" alt="Product 1">
-      </div>
-      <div class="product-info">
-        <h3>Abdullah Ki Kachi <span style="color: #DAA520;">(Limited Edition)</span></h3>
-        <p class="price"><del>RS150,000</del> <strong>RS150</strong> <span style="color: orange;">(99.99% OFF)</span></p>
-        <button class="btn" onclick="window.location.href='buy.html'">Buy Now</button>
-      </div>
-    </div>
-
-    <!-- Product 2 -->
-    <div class="product-card">
-      <div class="product-image">
-        <img src="https://i.ibb.co/S7GL2ybP/ab.jpg" alt="Product 2">
-      </div>
-      <div class="product-info">
-        <h3>Insane's Kacha <span style="color: #696969;">(Special Edition)</span></h3>
-        <p class="price"><del>RS20,000</del> <strong>RS150</strong> <span style="color: orange;">(99.99% OFF)</span></p>
-        <button class="btn" onclick="window.location.href='buy.html'">Buy Now</button>
-      </div>
-    </div>
-
-    <!-- Product 3 -->
-    <div class="product-card">
-      <div class="product-image">
-        <img src="https://i.ibb.co/tPLbmTgQ/am.jpg" alt="Product 3">
-      </div>
-      <div class="product-info">
-        <h3>Amaan Ki Kachi <span style="color: #808000;">(Only 1 in Solar System)</span></h3>
-        <p class="price"><del>RS50 Million</del> <strong>RS150</strong> <span style="color: orange;">(99.99% OFF)</span></p>
-        <button class="btn" onclick="window.location.href='buy.html'">Buy Now</button>
-      </div>
-    </div>
-  </div>
 
   <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBXOSxdEj1HBl96OndG9RfFNdqtvXQ82TI",
+      authDomain: "my-store-a881a.firebaseapp.com",
+      projectId: "my-store-a881a",
+      appId: "1:749092459183:web:44afb5c6a91d2a787eba5a"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    function handleCredentialResponse(response) {
+      const data = jwt_decode(response.credential);
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userName', data.name);
+      updateAuthUI();
+    }
+
     function logout() {
       localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('userName');
       updateAuthUI();
       alert("You have logged out.");
     }
@@ -228,10 +236,113 @@
       const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
       document.querySelector('.auth-buttons').style.display = loggedIn ? 'none' : 'flex';
       document.querySelector('.logout-buttons').style.display = loggedIn ? 'flex' : 'none';
+      document.getElementById('welcome-user').textContent = loggedIn ? `Welcome, ${localStorage.getItem('userName')}` : '';
     }
 
     window.onload = updateAuthUI;
+
+    function addToCart(name, price) {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      cart.push({ name, price });
+      localStorage.setItem('cart', JSON.stringify(cart));
+      document.getElementById('popupCart').style.display = 'flex';
+    }
+
+    function closePopup() {
+      document.getElementById('popupCart').style.display = 'none';
+    }
+
+    function buyProduct(name, price) {
+      localStorage.setItem('productName', name);
+      localStorage.setItem('price', price);
+      window.location.href = 'buy.html';
+    }
   </script>
+</head>
+<body>
+
+<div id="popupCart" class="popup">
+  <div class="popup-content">
+    <h2>Item Added to Cart!</h2>
+    <p>Your product has been successfully added to the cart.</p>
+    <button class="btn" onclick="window.location.href='cart.html'">Go to Cart</button>
+    <button class="btn" onclick="closePopup()">Continue Shopping</button>
+  </div>
+</div>
+
+<header>
+  <a href="index.html">
+    <img src="https://i.ibb.co/9SPP0z5/image.png" alt="Logo" class="logo">
+  </a>
+  <h1>ᴰᴵⱽᴵᴺᴱ Products</h1>
+  <div class="search-bar">
+    <input type="text" placeholder="Search products...">
+    <button>Search</button>
+  </div>
+  <div class="auth-buttons">
+    <div id="g_id_onload"
+         data-client_id="YOUR_CLIENT_ID_HERE"
+         data-context="signin"
+         data-ux_mode="popup"
+         data-callback="handleCredentialResponse"
+         data-auto_prompt="false">
+    </div>
+    <div class="g_id_signin"
+         data-type="standard"
+         data-shape="pill"
+         data-theme="outline"
+         data-text="sign_in_with"
+         data-size="large"
+         data-logo_alignment="left">
+    </div>
+  </div>
+  <div class="logout-buttons" style="display: none;">
+    <span id="welcome-user" style="color: white; font-weight: bold;"></span>
+    <button class="auth-btn" onclick="logout()">Logout</button>
+  </div>
+</header>
+
+<div class="product-container">
+  <!-- Product 1 -->
+  <div class="product-card">
+    <div class="product-image">
+      <img src="https://i.ibb.co/93cJg3mZ/d21f37610839bb71e35190a4ed961704579c4906-574-1024.jpg" alt="Product 1">
+    </div>
+    <div class="product-info">
+      <h3>Abdullah Ki Kachi <span style="color: #DAA520;">(Limited Edition)</span></h3>
+      <p class="price"><del>RS150,000</del> <strong>RS150</strong> <span style="color: orange;">(99.99% OFF)</span></p>
+      <button class="btn" onclick="buyProduct('Abdullah Ki Kachi (Limited Edition)', 150)">Buy Now</button>
+      <button class="btn-cart" onclick="addToCart('Abdullah Ki Kachi', 150)">Add to Cart</button>
+    </div>
+  </div>
+
+  <!-- Product 2 -->
+  <div class="product-card">
+    <div class="product-image">
+      <img src="https://i.ibb.co/S7GL2ybP/ab.jpg" alt="Product 2">
+    </div>
+    <div class="product-info">
+      <h3>Insane's Kacha <span style="color: #696969;">(Special Edition)</span></h3>
+      <p class="price"><del>RS20,000</del> <strong>RS150</strong> <span style="color: orange;">(99.99% OFF)</span></p>
+      <button class="btn" onclick="buyProduct('Insane\'s Kacha (Special Edition)', 150)">Buy Now</button>
+      <button class="btn-cart" onclick="addToCart('Insane\'s Kacha (Special Edition)', 150)">Add to Cart</button>
+    </div>
+  </div>
+
+  <!-- Product 3 -->
+  <div class="product-card">
+    <div class="product-image">
+      <img src="https://i.ibb.co/tPLbmTgQ/am.jpg" alt="Product 3">
+    </div>
+    <div class="product-info">
+      <h3>Amaan Ki Kachi <span style="color: #808000;">(Only 1 in Solar System)</span></h3>
+      <p class="price"><del>RS50 Million</del> <strong>RS149</strong> <span style="color: orange;">(99.99% OFF)</span></p>
+      <button class="btn" onclick="buyProduct('Amaan Ki Kachi (Only 1 in Solar System)', 149)">Buy Now</button>
+      <button class="btn-cart" onclick="addToCart('Amaan Ki Kachi (Only 1 in Solar System)', 149)">Add to Cart</button>
+    </div>
+  </div>
+</div>
+
 
 </body>
 </html>
