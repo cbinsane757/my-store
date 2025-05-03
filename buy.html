@@ -26,25 +26,25 @@
       margin: 40px auto;
       background: #1a1a2e;
       padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+      border-radius: 10px;
+      box-shadow: 0 8px 70px rgba(0,0,0,0.5);
     }
 
     h2 {
       text-align: center;
-      margin-bottom: 25px;
+      margin-bottom: 3px;
       color: #ffcb05;
     }
 
     label {
       display: block;
-      margin-bottom: 10px;
+      margin-bottom: 1px;
       font-weight: bold;
     }
 
     input, select, textarea {
       width: 100%;
-      padding: 12px;
+      padding: 7px;
       border: none;
       border-radius: 8px;
       margin-bottom: 20px;
@@ -59,11 +59,11 @@
     .btn {
       width: 100%;
       background-color: #ffcb05;
-      color: #0e1a40;
-      font-size: 18px;
-      padding: 12px;
+      color: #403e0e;
+      font-size: 20px;
+      padding: 15px;
       border: none;
-      border-radius: 25px;
+      border-radius: 35px;
       cursor: pointer;
       transition: background-color 0.3s ease;
     }
@@ -87,7 +87,24 @@
 
     .error-msg {
       color: red;
-      font-size: 14px;
+      font-size: 13px;
+    }
+
+    .payment-details {
+      display: none;
+    }
+
+    #productName, #price {
+      background: white;
+      color: #000000;
+      cursor: not-allowed;
+    }
+
+    .product-info {
+      margin-bottom: 20px;
+      background-color: #2a2a3d;
+      padding: 10px;
+      border-radius: 8px;
     }
   </style>
 </head>
@@ -95,10 +112,13 @@
 
   <header>Checkout - ᴰᴵⱽᴵᴺᴱ Products</header>
 
-  <div class="container">
+  <div class="container">  
     <h2>Complete Your Purchase</h2>
 
     <form id="orderForm">
+      <input type="text" id="productName" disabled>
+      <input type="text" id="price" disabled>
+
       <label for="name">Full Name</label>
       <input type="text" id="name" placeholder="Enter your name" required>
       <div class="error-msg" id="nameError"></div>
@@ -127,6 +147,22 @@
       </select>
       <div class="error-msg" id="paymentError"></div>
 
+      <!-- Payment Details -->
+      <div class="payment-details" id="cardDetails">
+        <label for="cardNumber">Card Number</label>
+        <input type="text" id="cardNumber" placeholder="Enter your card number">
+      </div>
+
+      <div class="payment-details" id="easypaisaDetails">
+        <label for="easypaisaNumber">Easypaisa Number</label>
+        <input type="text" id="easypaisaNumber" placeholder="Enter Easypaisa phone number">
+      </div>
+
+      <div class="payment-details" id="jazzcashDetails">
+        <label for="jazzcashNumber">JazzCash Number</label>
+        <input type="text" id="jazzcashNumber" placeholder="Enter JazzCash phone number">
+      </div>
+
       <label for="note">Additional Notes (Optional)</label>
       <textarea id="note" placeholder="Any additional notes..." rows="4"></textarea>
 
@@ -137,73 +173,109 @@
   </div>
 
   <script>
-    const phoneInput = document.getElementById('phone');
-    const confirmBtn = document.getElementById('confirmBtn');
-    const orderForm = document.getElementById('orderForm');
+    const checkoutItems = JSON.parse(localStorage.getItem('checkoutItems')) || [];
+    const productNameField = document.getElementById('productName');
+    const priceField = document.getElementById('price');
 
-    const nameError = document.getElementById('nameError');
-    const addressError = document.getElementById('addressError');
-    const emailError = document.getElementById('emailError');
-    const phoneError = document.getElementById('phoneError');
-    const paymentError = document.getElementById('paymentError');
+    const totalPriceField = document.createElement('h3');
+    totalPriceField.style.color = '#ffcb05';
+    document.querySelector('.container').appendChild(totalPriceField);
 
-    phoneInput.addEventListener('input', () => {
-      phoneInput.value = phoneInput.value.replace(/\s/g, ''); // Remove spaces
-      const isValid = /^03\d{9}$/.test(phoneInput.value);
-      phoneInput.classList.toggle('invalid', !isValid);
-      phoneError.textContent = isValid ? '' : 'Invalid phone number format.';
+    // Group duplicates
+    const groupedItems = {};
+    checkoutItems.forEach(item => {
+      if (groupedItems[item.name]) {
+        groupedItems[item.name].quantity += 1;
+        groupedItems[item.name].total += parseFloat(item.price);
+      } else {
+        groupedItems[item.name] = {
+          name: item.name,
+          pricePerUnit: parseFloat(item.price),
+          quantity: 1,
+          total: parseFloat(item.price)
+        };
+      }
     });
 
-    confirmBtn.addEventListener('click', function() {
+    // Hide original inputs
+    productNameField.style.display = 'none';
+    priceField.style.display = 'none';
+
+    let totalPrice = 0;
+    Object.values(groupedItems).forEach(item => {
+      const productDiv = document.createElement('div');
+      productDiv.className = 'product-info';
+      productDiv.innerHTML = `
+        <p><strong>${item.name}</strong></p>
+        <p>Quantity: ${item.quantity}</p>
+        <p>Price per unit: RS${item.pricePerUnit}</p>
+        <p>Total: RS${item.total}</p>
+        <hr style="border: 0.5px solid #555;">
+      `;
+      totalPrice += item.total;
+      document.querySelector('.container').appendChild(productDiv);
+    });
+
+    totalPriceField.textContent = `Total Price: RS${totalPrice}`;
+
+    // Payment method logic
+    document.getElementById('payment').addEventListener('change', function () {
+      document.querySelectorAll('.payment-details').forEach(div => div.style.display = 'none');
+      const method = this.value;
+      if (method === 'card') {
+        document.getElementById('cardDetails').style.display = 'block';
+      } else if (method === 'easypaisa') {
+        document.getElementById('easypaisaDetails').style.display = 'block';
+      } else if (method === 'jazzcash') {
+        document.getElementById('jazzcashDetails').style.display = 'block';
+      }
+    });
+
+    document.getElementById('confirmBtn').addEventListener('click', function () {
       let isValid = true;
 
-      // Reset all errors
-      nameError.textContent = '';
-      addressError.textContent = '';
-      emailError.textContent = '';
-      phoneError.textContent = '';
-      paymentError.textContent = '';
+      // Clear errors
+      ['nameError', 'addressError', 'emailError', 'phoneError', 'paymentError'].forEach(id => {
+        document.getElementById(id).textContent = '';
+      });
 
-      // Name validation
       const name = document.getElementById('name').value;
       if (!name) {
         isValid = false;
-        nameError.textContent = 'Please enter your name.';
+        document.getElementById('nameError').textContent = 'Please enter your name.';
       }
 
-      // Address validation
       const address = document.getElementById('address').value;
       if (!address) {
         isValid = false;
-        addressError.textContent = 'Please enter your address.';
+        document.getElementById('addressError').textContent = 'Please enter your address.';
       }
 
-      // Email validation
       const email = document.getElementById('email').value;
       if (!email || !/\S+@\S+\.\S+/.test(email)) {
         isValid = false;
-        emailError.textContent = 'Please enter a valid email address.';
+        document.getElementById('emailError').textContent = 'Please enter a valid email address.';
       }
 
-      // Phone validation
       const phone = document.getElementById('phone').value;
       if (!phone || !/^03\d{9}$/.test(phone)) {
         isValid = false;
-        phoneError.textContent = 'Please enter a valid phone number (without spaces).';
+        document.getElementById('phoneError').textContent = 'Please enter a valid phone number (without spaces).';
       }
 
-      // Payment method validation
       const payment = document.getElementById('payment').value;
       if (!payment) {
         isValid = false;
-        paymentError.textContent = 'Please select a payment method.';
+        document.getElementById('paymentError').textContent = 'Please select a payment method.';
       }
 
       if (isValid) {
-        window.location.href = 'confirmation.html'; // Redirect to confirmation page
+        localStorage.setItem('orderSummary', JSON.stringify(Object.values(groupedItems)));
+        localStorage.setItem('paymentMethod', payment);
+        localStorage.setItem('address', address);
+        window.location.href = 'confirmation.html';
       }
     });
   </script>
-
 </body>
 </html>
