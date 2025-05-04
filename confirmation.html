@@ -114,7 +114,7 @@
   </header>
 
   <div class="container">
-    <h2>Thank You for Your Order!</h2>
+    <h2>Thank You for Your Order, <span id="customerName">Customer</span>!</h2>
     <p>Your order has been successfully placed. You will receive a confirmation email soon.</p>
 
     <h3>Order Summary</h3>
@@ -160,6 +160,12 @@
       document.getElementById('address').textContent = address;
     };
   </script>
+
+
+<script>
+  const name = localStorage.getItem('customerName') || 'Customer';
+  document.getElementById('customerName').textContent = name;
+</script>
 
 </body>
 </html>
