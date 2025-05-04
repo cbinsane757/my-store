@@ -277,5 +277,25 @@
       }
     });
   </script>
+
+<script>
+  document.getElementById("buyForm").addEventListener("submit", function(e) {
+    e.preventDefault(); // Prevent default form submission
+
+    // Get form values
+    const name = document.getElementById("name").value;
+    const address = document.getElementById("address").value;
+    const payment = document.getElementById("payment").value;
+
+    // Save to localStorage
+    localStorage.setItem("customerName", name);
+    localStorage.setItem("address", address);
+    localStorage.setItem("paymentMethod", payment);
+
+    // Redirect to confirmation page
+    window.location.href = "confirmation.html";
+  });
+</script>
+
 </body>
 </html>
