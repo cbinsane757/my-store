@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <title>Sadwal's Best Store</title>
-
+  <meta name="description" content="Welcome to Sadwal's Best Store, your one-stop shop for amazing products!">
+  
   <!-- Firebase & Google Identity Services -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js" defer></script>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js" defer></script>
 
   <meta name="google-signin-client_id" content="749092459183-ot7efihdi1n8l8m4vbikth6f1jeoq1ed.apps.googleusercontent.com">
 
@@ -29,8 +30,8 @@
       border-bottom: 4px solid #ffcb05;
       box-shadow: 0 4px 8px rgba(0,0,0,0.3);
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: center;
     }
 
     header h1 {
@@ -207,6 +208,13 @@
       width: 100%;
       border: none;
     }
+
+    /* Responsive Design */
+    @media (max-width: 600px) {
+      .search-bar {
+        width: 100%;
+      }
+    }
   </style>
 
   <script>
@@ -272,16 +280,16 @@
 
 <header>
   <a href="index.html">
-    <img src="https://i.ibb.co/9SPP0z5/image.png" alt="Logo" class="logo">
+    <img src="https://i.ibb.co/9SPP0z5/image.png" alt="Sadwal's Best Store Logo" class="logo">
   </a>
   <h1>ᴰᴵⱽᴵᴺᴱ Products</h1>
   <div class="search-bar">
-    <input type="text" placeholder="Search products...">
+    <input type="text" placeholder="Search products..." aria-label="Search products">
     <button>Search</button>
   </div>
   <div class="auth-buttons">
     <div id="g_id_onload"
-         data-client_id="YOUR_CLIENT_ID_HERE"
+        data-client_id="749092459183-ot7efihdi1n8l8m4vbikth6f1jeoq1ed.apps.googleusercontent.com"
          data-context="signin"
          data-ux_mode="popup"
          data-callback="handleCredentialResponse"
@@ -303,46 +311,45 @@
 </header>
 
 <div class="product-container">
-  <!-- Product 1 -->
-  <div class="product-card">
-    <div class="product-image">
-      <img src="https://i.ibb.co/93cJg3mZ/d21f37610839bb71e35190a4ed961704579c4906-574-1024.jpg" alt="Product 1">
-    </div>
-    <div class="product-info">
-      <h3>Abdullah Ki Kachi <span style="color: #DAA520;">(Limited Edition)</span></h3>
-      <p class="price"><del>RS150,000</del> <strong>RS150</strong> <span style="color: orange;">(99.99% OFF)</span></p>
-      <button class="btn" onclick="buyProduct('Abdullah Ki Kachi (Limited Edition)', 150)">Buy Now</button>
-      <button class="btn-cart" onclick="addToCart('Abdullah Ki Kachi', 150)">Add to Cart</button>
-    </div>
+ <!-- Product 1 -->
+<div class="product-card">
+  <div class="product-image">
+    <img src="https://i.ibb.co/0jJQ7q7K/Gaming-Headset-with-Microphone-and-LED-Lights.jpg" alt="Gaming Headset with Microphone and LED Lights">
   </div>
-
-  <!-- Product 2 -->
-  <div class="product-card">
-    <div class="product-image">
-      <img src="https://i.ibb.co/S7GL2ybP/ab.jpg" alt="Product 2">
-    </div>
-    <div class="product-info">
-      <h3>Insane's Kacha <span style="color: #696969;">(Special Edition)</span></h3>
-      <p class="price"><del>RS20,000</del> <strong>RS150</strong> <span style="color: orange;">(99.99% OFF)</span></p>
-      <button class="btn" onclick="buyProduct('Insane\'s Kacha (Special Edition)', 150)">Buy Now</button>
-      <button class="btn-cart" onclick="addToCart('Insane\'s Kacha (Special Edition)', 150)">Add to Cart</button>
-    </div>
-  </div>
-
-  <!-- Product 3 -->
-  <div class="product-card">
-    <div class="product-image">
-      <img src="https://i.ibb.co/tPLbmTgQ/am.jpg" alt="Product 3">
-    </div>
-    <div class="product-info">
-      <h3>Amaan Ki Kachi <span style="color: #808000;">(Only 1 in Solar System)</span></h3>
-      <p class="price"><del>RS50 Million</del> <strong>RS149</strong> <span style="color: orange;">(99.99% OFF)</span></p>
-      <button class="btn" onclick="buyProduct('Amaan Ki Kachi (Only 1 in Solar System)', 149)">Buy Now</button>
-      <button class="btn-cart" onclick="addToCart('Amaan Ki Kachi (Only 1 in Solar System)', 149)">Add to Cart</button>
-    </div>
+  <div class="product-info">
+    <h3>Gaming Headset with Microphone and LED Lights</h3>
+    <p class="price"><strong>RS5,000</strong></p>
+    <button class="btn" onclick="buyProduct('Gaming Headset with Microphone and LED Lights', 5000)">Buy Now</button>
+    <button class="btn-cart" onclick="addToCart('Gaming Headset with Microphone and LED Lights', 5000)">Add to Cart</button>
   </div>
 </div>
 
 
+<!-- Product 2 -->
+<div class="product-card">
+  <div class="product-image">
+    <img src="https://i.ibb.co/Cd4JJ4w/Poedagar-Men-Watch.jpg" alt="Poedagar Men's Stainless Steel Watch">
+  </div>
+  <div class="product-info">
+    <h3>Poedagar Men's Stainless Steel Watch</h3>
+    <p class="price"><del>RS5000</del> <strong>RS4250</strong> <span style="color: orange;">(15% OFF)</span></p>
+    <button class="btn" onclick="buyProduct('Poedagar Men\'s Stainless Steel Watch', 4250)">Buy Now</button>
+    <button class="btn-cart" onclick="addToCart('Poedagar Men\'s Stainless Steel Watch', 4250)">Add to Cart</button>
+  </div>
+</div>
+
+<!-- Product 3 -->
+<div class="product-card">
+  <div class="product-image">
+    <img src="https://i.ibb.co/XkrzZjZf/Quartz-Steel-Band-Wristwatch.jpg" alt="Quartz Steel Band Wristwatch">
+  </div>
+  <div class="product-info">
+    <h3>Quartz Steel Band Wristwatch</h3>
+    <p class="price"><strong>RS22,400</strong></p>
+    <button class="btn" onclick="buyProduct('Quartz Steel Band Wristwatch', 22400)">Buy Now</button>
+    <button class="btn-cart" onclick="addToCart('Quartz Steel Band Wristwatch', 22400)">Add to Cart</button>
+  </div>
+</div>
+</div>
 </body>
 </html>
