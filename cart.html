@@ -64,23 +64,6 @@
       color: #ffcb05;
     }
 
-    .btn {
-      background-color: #ffcb07;
-      color: #0e1a40;
-      padding: 10px 16px;
-      border: none;
-      border-radius: 25px;
-      font-size: 15px;
-      cursor: pointer;
-      margin-top: 20px;
-      margin-right: 50px;
-      margin-left: 20px;
-    }
-
-    .btn:hover {
-      background-color: #ffd700;
-    }
-
     .empty-cart {
       text-align: center;
       padding: 50px 20px;
@@ -94,9 +77,9 @@
 
     .actions {
       display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 15px;
+      justify-content: center; /* Centers the buttons */
+      gap: 15px; /* Adds space between the buttons */
+      margin-top: 20px; /* Adds space between items and buttons */
     }
 
     .back-button {
@@ -124,7 +107,9 @@
       border-radius: 7px;
       cursor: pointer;
       margin-top: 10px;
+      margin-bottom: 0.5px;
       margin-left: 800px;
+      display: inline-block;
     }
 
     .select-all:hover {
@@ -166,6 +151,42 @@
     .close-popup:hover {
       background-color: #ffd700;
     }
+
+    /* Mobile-First Design */
+    @media (max-width: 768px) {
+      .cart-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .select-all {
+        margin-top: 16px;
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+      }
+
+      .back-button {
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+      }
+    }
+
+    /* Added yellow padding for Checkout and Remove buttons */
+    .btn {
+      background-color: #ffcb05;
+      color: #0e1a40;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 7px;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background-color: #ffd700;
+    }
+
   </style>
 </head>
 <body>
@@ -178,6 +199,11 @@
 
   <div class="cart-container" id="cartContainer"></div>
 
+  <div class="actions">
+    <button class="btn" onclick="removeSelected()">Remove Selected</button>
+    <button class="btn" onclick="checkoutSelected()">Checkout</button>
+  </div>
+
   <div class="popup-overlay" id="popupOverlay"></div>
   <div class="popup" id="popup">
     <h2>Warning</h2>
@@ -186,15 +212,14 @@
   </div>
 
   <script>
-   const productsData = {
-  "Gaming Headset with Microphone and LED Lights": "https://i.ibb.co/0jJQ7q7K/Gaming-Headset-with-Microphone-and-LED-Lights.jpg",
-  "Poedagar Men's Stainless Steel Watch": "https://i.ibb.co/Cd4JJ4w/Poedagar-Men-Watch.jpg",
-  "Quartz Steel Band Wristwatch": "https://i.ibb.co/XkrzZjZf/Quartz-Steel-Band-Wristwatch.jpg"
-};
-
-    
+    const productsData = {
+      "Gaming Headset with Microphone and LED Lights": "https://i.ibb.co/0jJQ7q7K/Gaming-Headset-with-Microphone-and-LED-Lights.jpg",
+      "Poedagar Men's Stainless Steel Watch": "https://i.ibb.co/Cd4JJ4w/Poedagar-Men-Watch.jpg",
+      "Quartz Steel Band Wristwatch": "https://i.ibb.co/XkrzZjZf/Quartz-Steel-Band-Wristwatch.jpg"
+    };
 
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const selectedIndexes = new Set(JSON.parse(localStorage.getItem('selectedIndexes')) || []);
     const cartContainer = document.getElementById('cartContainer');
     const popup = document.getElementById('popup');
     const popupOverlay = document.getElementById('popupOverlay');
@@ -219,7 +244,7 @@
         itemDiv.className = 'cart-item';
         itemDiv.innerHTML = `
           <label>
-            <input type="checkbox" class="select-item" data-index="${index}">
+            <input type="checkbox" class="select-item" data-index="${index}" ${selectedIndexes.has(index) ? 'checked' : ''}>
             <img src="${image}" alt="${item.name}">
             <span class="name">${item.name}</span>
           </label>
@@ -228,40 +253,41 @@
         cartContainer.appendChild(itemDiv);
       });
 
-      const actionsDiv = document.createElement('div');
-      actionsDiv.className = 'actions';
-      actionsDiv.innerHTML = `
-        <button class="btn" onclick="removeSelected()">Remove Selected</button>
-        <button class="btn" onclick="checkoutSelected()">Checkout Selected</button>
-      `;
-      cartContainer.appendChild(actionsDiv);
+      updateTotalPrice();
+    }
+
+    function updateTotalPrice() {
+      let totalPrice = 0;
+      selectedIndexes.forEach(index => {
+        totalPrice += cart[index].price;
+      });
     }
 
     function toggleSelectAll() {
       const checkboxes = document.querySelectorAll('.select-item');
       const allSelected = Array.from(checkboxes).every(cb => cb.checked);
       checkboxes.forEach(cb => cb.checked = !allSelected);
+      selectedIndexes.clear();
+      if (!allSelected) {
+        checkboxes.forEach(cb => selectedIndexes.add(parseInt(cb.dataset.index)));
+      }
+      localStorage.setItem('selectedIndexes', JSON.stringify(Array.from(selectedIndexes)));
+      updateTotalPrice();
     }
 
     function removeSelected() {
-      const checkboxes = document.querySelectorAll('.select-item:checked');
-      if (checkboxes.length === 0) {
-        showPopup();
-        return;
-      }
-      const indexesToRemove = Array.from(checkboxes).map(cb => parseInt(cb.dataset.index));
-      const newCart = cart.filter((_, i) => !indexesToRemove.includes(i));
+      const newCart = cart.filter((_, i) => !selectedIndexes.has(i));
       localStorage.setItem('cart', JSON.stringify(newCart));
+      localStorage.removeItem('selectedIndexes');
       location.reload();
     }
 
     function checkoutSelected() {
-      const checkboxes = document.querySelectorAll('.select-item:checked');
-      if (checkboxes.length === 0) {
+      if (selectedIndexes.size === 0) {
         showPopup();
         return;
       }
-      const selectedItems = Array.from(checkboxes).map(cb => cart[parseInt(cb.dataset.index)]);
+      const selectedItems = cart.filter((_, i) => selectedIndexes.has(i));
       localStorage.setItem('checkoutItems', JSON.stringify(selectedItems));
       window.location.href = 'buy.html';
     }
@@ -278,5 +304,10 @@
 
     renderCart();
   </script>
+
+  <footer style="background-color: #0e1a40; color: white; text-align: center; padding: 20px; margin-top: 40px; border-top: 4px solid #ffcb05;">
+    <p style="margin: 0;">&copy; 2025 Sadwal's Best Store | <a href="terms.html" style="color: #ffcb05; text-decoration: none;">Terms of Service</a></p>
+  </footer>
+
 </body>
 </html>
