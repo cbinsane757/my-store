@@ -106,6 +106,18 @@
       padding: 10px;
       border-radius: 8px;
     }
+
+    /* Responsive Design */
+    @media screen and (max-width: 600px) {
+      .container {
+        padding: 15px;
+        margin: 20px;
+      }
+      .btn {
+        font-size: 18px;
+        padding: 12px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -119,26 +131,26 @@
       <input type="text" id="productName" disabled>
       <input type="text" id="price" disabled>
 
-      <label for="name">Full Name</label>
-      <input type="text" id="name" placeholder="Enter your name" required>
+      <label for="name" aria-label="Full Name">Full Name</label>
+      <input type="text" id="name" placeholder="Enter your name" required aria-required="true">
       <div class="error-msg" id="nameError"></div>
 
-      <label for="address">Shipping Address</label>
-      <input type="text" id="address" placeholder="Enter your address" required>
+      <label for="address" aria-label="Shipping Address">Shipping Address</label>
+      <input type="text" id="address" placeholder="Enter your address" required aria-required="true">
       <div class="error-msg" id="addressError"></div>
 
-      <label for="email">Email Address</label>
-      <input type="email" id="email" placeholder="Enter your email" required>
+      <label for="email" aria-label="Email Address">Email Address</label>
+      <input type="email" id="email" placeholder="Enter your email" required aria-required="true">
       <div class="error-msg" id="emailError"></div>
 
-      <label for="phone">Phone Number (No spaces)</label>
+      <label for="phone" aria-label="Phone Number">Phone Number (No spaces)</label>
       <input type="tel" id="phone" name="phone" placeholder="03001234567" 
              pattern="^03[0-9]{9}$" 
-             title="Enter without spaces, e.g., 03001234567" required>
+             title="Enter without spaces, e.g., 03001234567" required aria-required="true">
       <div class="error-msg" id="phoneError"></div>
 
-      <label for="payment">Payment Method</label>
-      <select id="payment" required>
+      <label for="payment" aria-label="Payment Method">Payment Method</label>
+      <select id="payment" required aria-required="true">
         <option value="">Choose one</option>
         <option value="cod">Cash on Delivery</option>
         <option value="easypaisa">Easypaisa</option>
@@ -149,21 +161,21 @@
 
       <!-- Payment Details -->
       <div class="payment-details" id="cardDetails">
-        <label for="cardNumber">Card Number</label>
+        <label for="cardNumber" aria-label="Card Number">Card Number</label>
         <input type="text" id="cardNumber" placeholder="Enter your card number">
       </div>
 
       <div class="payment-details" id="easypaisaDetails">
-        <label for="easypaisaNumber">Easypaisa Number</label>
+        <label for="easypaisaNumber" aria-label="Easypaisa Number">Easypaisa Number</label>
         <input type="text" id="easypaisaNumber" placeholder="Enter Easypaisa phone number">
       </div>
 
       <div class="payment-details" id="jazzcashDetails">
-        <label for="jazzcashNumber">JazzCash Number</label>
+        <label for="jazzcashNumber" aria-label="JazzCash Number">JazzCash Number</label>
         <input type="text" id="jazzcashNumber" placeholder="Enter JazzCash phone number">
       </div>
 
-      <label for="note">Additional Notes (Optional)</label>
+      <label for="note" aria-label="Additional Notes">Additional Notes (Optional)</label>
       <textarea id="note" placeholder="Any additional notes..." rows="4"></textarea>
 
       <button type="button" class="btn" id="confirmBtn">Confirm Order</button>
@@ -278,24 +290,9 @@
     });
   </script>
 
-<script>
-  document.getElementById("buyForm").addEventListener("submit", function(e) {
-    e.preventDefault(); // Prevent default form submission
-
-    // Get form values
-    const name = document.getElementById("name").value;
-    const address = document.getElementById("address").value;
-    const payment = document.getElementById("payment").value;
-
-    // Save to localStorage
-    localStorage.setItem("customerName", name);
-    localStorage.setItem("address", address);
-    localStorage.setItem("paymentMethod", payment);
-
-    // Redirect to confirmation page
-    window.location.href = "confirmation.html";
-  });
-</script>
+  <footer style="background-color: #0e1a40; color: white; text-align: center; padding: 20px; margin-top: 40px; border-top: 4px solid #ffcb05;">
+    <p style="margin: 0;">&copy; 2025 Sadwal's Best Store | <a href="terms.html" style="color: #ffcb05; text-decoration: none;">Terms of Service</a></p>
+  </footer>
 
 </body>
 </html>
