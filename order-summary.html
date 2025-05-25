@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Order Summary - Sadwal's Best Store</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1f3b72, #4e73df);
+      margin: 0;
+      padding: 0;
+      color: #fff;
+    }
+    header {
+      background-color: #0e1a40;
+      color: #ffcb05;
+      padding: 10px;
+      text-align: center;
+      font-size: 28px;
+      border-bottom: 4px solid #ffcb05;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .logo {
+      width: 117px;
+      height: 100px;
+      margin-right: 6px;
+      margin-left: 1px;
+      margin-top: 2px;
+      cursor: pointer;
+    }
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      background: #1a1a2e;
+      padding: 30px 20px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 2px;
+      color: #ffcb05;
+    }
+    p {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    .btn {
+      width: 100%;
+      background-color: #ffcb05;
+      color: #0e1a40;
+      font-size: 18px;
+      padding: 10px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .btn:hover {
+      background-color: #ffd700;
+    }
+    .back-link {
+      display: block;
+      margin-top: 20px;
+      text-align: center;
+      color: #ccc;
+      text-decoration: none;
+    }
+   
+    .product-summary {
+      margin-top: 10px;
+      background-color: #2a2a3d;
+      padding: 15px;
+      border-radius: 10px;
+    }
+    .product-summary h3 {
+      color: #ffcb05;
+      margin-top: 0;
+    }
+    .product-summary p {
+      margin: 1px 0;
+    }
+    .total {
+      font-weight: bold;
+      font-size: 20px;
+      color: #ffcb05;
+      margin-top: 10px;
+    }
+    .skeleton-loader {
+      padding: 10px;
+    }
+    .skeleton {
+      background-color: #333;
+      border-radius: 5px;
+      margin-bottom: 12px;
+      animation: pulse 1.5s infinite ease-in-out;
+    }
+    .skeleton.title {
+      height: 24px;
+      width: 60%;
+    }
+    .skeleton.line {
+      height: 16px;
+      width: 100%;
+    }
+    .skeleton.line.short {
+      width: 40%;
+    }
+    @keyframes pulse {
+      0% { opacity: 0.6; }
+      50% { opacity: 1; }
+      100% { opacity: 0.6; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="https://i.ibb.co/YwggSYs/image.png" alt="Logo" class="logo" onclick="window.location.href='index.html'">
+    Order Summary - ᴰᴵⱽᴵᴺᴱ Products
+  </header>
+
+  <div class="container">
+    <h2>Thank You, <span id="customerName">Customer</span>!</h2>
+    <p>Your order has been successfully placed.</p>
+    <h3>Order Summary</h3>
+    <div class="product-summary" id="summaryContainer"></div>
+    <button class="btn" onclick="window.location.href='index.html'">Back to Products</button>
+  </div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCXJiBXLNVnk0TSigI2bDA9kG4MgrXEQ40",
+    authDomain: "my-store-a881a.firebaseapp.com",
+    projectId: "my-store-a881a",
+    storageBucket: "my-store-a881a.appspot.com",
+    messagingSenderId: "749092459183",
+    appId: "1:749092459183:web:44afb5c6a91d2a787eba5a",
+    measurementId: "G-FLDGL3JF38"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+
+  const params = new URLSearchParams(window.location.search);
+  const orderId = params.get("orderId");
+  const summaryContainer = document.getElementById("summaryContainer");
+
+  // Skeleton loader
+  summaryContainer.innerHTML = `
+    <div class="skeleton-loader">
+      <div class="skeleton title"></div>
+      <div class="skeleton line"></div>
+      <div class="skeleton line short"></div>
+      <div class="skeleton line"></div>
+    </div>
+  `;
+
+  async function loadOrderDetails(retries = 5) {
+    if (!orderId) {
+      alert("Invalid order ID.");
+      return window.location.href = "index.html";
+    }
+
+    const orderRef = doc(db, "orders", orderId);
+    const orderSnap = await getDoc(orderRef);
+
+    if (!orderSnap.exists()) {
+      if (retries > 0) {
+        setTimeout(() => loadOrderDetails(retries - 1), 700);
+      } else {
+        alert("Order not found.");
+        return window.location.href = "index.html";
+      }
+      return;
+    }
+
+    const orderData = orderSnap.data();
+    document.getElementById("customerName").innerText = orderData.fullName;
+
+    summaryContainer.innerHTML = `
+      <h3>Customer Information</h3>
+      <p><strong>Name:</strong> ${orderData.fullName}</p>
+      <p><strong>Email:</strong> ${orderData.email}</p>
+      <p><strong>Phone:</strong> ${orderData.phone}</p>
+      <p><strong>Shipping Address:</strong> ${orderData.address || 'Not specified'}</p>
+
+      <h3>Payment Method</h3>
+      <p>${orderData.payment || 'Not specified'}</p>
+
+      <h3>Items:</h3>
+      <div>
+      ${orderData.items.map(item => `
+        <div style="display:flex; align-items:center; margin-bottom:15px; background:#2a2a3d; padding:10px; border-radius:10px;">
+          <img src="${item.imageUrl}" alt="${item.name}" style="width:80px; height:80px; object-fit:contain; border-radius:8px; margin-right:15px;">
+          <div>
+            <div style="font-weight:bold; font-size:18px; color:#ffcb05;">${item.name}</div>
+            <div style="font-size:16px; color:#ccc;">Qty: ${item.quantity}</div>
+            <div style="font-size:16px; color:#ccc;">Price: Rs ${item.price}</div>
+          </div>
+        </div>
+      `).join('')}
+      </div>
+
+      <h3 class="total">Total: Rs ${orderData.total}</h3>
+    `;
+  }
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      loadOrderDetails();
+    } else {
+      summaryContainer.innerHTML = `<p>Please login to view this order. Redirecting...</p>`;
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 7000);
+    }
+  });
+</script>
+
+<footer style="background-color: #0e1a40; color: white; text-align: center; padding: 20px; margin-top: 40px; border-top: 4px solid #ffcb05;">
+  <p style="margin: 0;">&copy; 2025 Sadwal's Best Store | <a href="terms.html" style="color: #ffcb05; text-decoration: none;">Terms of Service</a></p>
+</footer>
+</body>
+</html>

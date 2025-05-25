@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Instant Buy – Sadwal’s Best Store</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1f3b72, #4e73df);
+      margin: 0;
+      padding: 0;
+      color: #fff;
+    }
+    header {
+      background-color: #0e1a40;
+      color: #ffcb05;
+      padding: 20px;
+      text-align: center;
+      font-size: 28px;
+      border-bottom: 4px solid #ffcb05;
+    }
+    .container {
+      max-width: 500px;
+      margin: 40px auto;
+      background: #1a1a2e;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 8px 70px rgba(0,0,0,0.5);
+    }
+    h2 { text-align: center; margin-bottom: 20px; color: #ffcb05; }
+    .product-info {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      background: #2a2a3d;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .product-info img {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+    .product-info p {
+      margin: 2px 0;
+    }
+    .skeleton {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      background: linear-gradient(90deg, #1a1a2e 25%, #0f3460 50%, #1a1a2e 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+    .image-skeleton {
+      width: 80px;
+      height: 80px;
+      border-radius: 8px;
+      background: #222a4a;
+    }
+    .text-skeleton {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .line {
+      height: 15px;
+      border-radius: 6px;
+      background: #222a4a;
+    }
+    .short { width: 40%; }
+    .long  { width: 80%; }
+
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    label { display: block; margin-top: 10px; font-weight: bold; }
+    input, select, textarea, button {
+      width: 100%; padding: 10px; margin-top: 5px; border: none;
+      border-radius: 8px; font-size: 16px; outline: none;
+    }
+    .btn {
+      background-color: #ffcb05; color: #403e0e; font-size: 20px;
+      cursor: pointer; transition: background-color 0.3s ease;
+      margin-top: 20px;
+    }
+    .btn:hover { background-color: #ffd700; }
+    .back-link {
+      display: block; text-align: center; color: #ccc;
+      text-decoration: none; margin-top: 10px;
+    }
+    .back-link:hover { color: #fff; text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <header>Checkout – ᴰᴵⱽᴵᴺᴱ Products</header>
+  <div class="container">
+    <h2>Complete Your Purchase</h2>
+
+    <!-- Skeleton loader -->
+    <div id="cartItems">
+      <div class="skeleton">
+        <div class="image-skeleton"></div>
+        <div class="text-skeleton">
+          <div class="line short"></div>
+          <div class="line long"></div>
+        </div>
+      </div>
+    </div>
+    <h3 id="totalPriceField" style="color:#ffcb05;"></h3>
+
+    <form id="orderForm">
+      <label for="name">Full Name</label>
+      <input type="text" id="name" placeholder="Enter your name" required />
+
+      <label for="address">Shipping Address</label>
+      <input type="text" id="address" placeholder="Enter your address" required />
+
+      <label for="email">Email Address</label>
+      <input type="email" id="email" placeholder="Enter your email" required />
+
+      <label for="phone">Phone Number (No spaces)</label>
+      <input type="tel" id="phone" placeholder="03001234567"
+             pattern="^03[0-9]{9}$" title="e.g. 03001234567" required />
+
+      <label for="payment">Payment Method</label>
+      <select id="payment" required>
+        <option value="">Choose one</option>
+        <option value="cod">Cash on Delivery</option>
+        <option value="easypaisa">Easypaisa</option>
+        <option value="jazzcash">JazzCash</option>
+        <option value="card">Credit/Debit Card</option>
+      </select>
+
+      <label for="note">Additional Notes (Optional)</label>
+      <textarea id="note" rows="4" placeholder="Any additional notes..."></textarea>
+
+      <button type="button" class="btn" id="confirmBtn">Confirm Order</button>
+    </form>
+
+    <a href="index.html" class="back-link">← Back to Products</a>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence }
+      from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc, deleteDoc }
+      from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+
+    // Firebase Init
+    const firebaseConfig = {
+      apiKey: "AIzaSyCXJiBXLNVnk0TSigI2bDA9kG4MgrXEQ40",
+      authDomain: "my-store-a881a.firebaseapp.com",
+      projectId: "my-store-a881a",
+      storageBucket: "my-store-a881a.appspot.com",
+      messagingSenderId: "749092459183",
+      appId: "1:749092459183:web:44afb5c6a91d2a787eba5a",
+      measurementId: "G-FLDGL3JF38"
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    await setPersistence(auth, browserLocalPersistence);
+    const db = getFirestore(app);
+
+    // State & Elements
+    const params = new URLSearchParams(window.location.search);
+    const checkoutId = params.get("checkoutId");
+    const cartItemsContainer = document.getElementById("cartItems");
+    const totalPriceField    = document.getElementById("totalPriceField");
+    const confirmBtn         = document.getElementById("confirmBtn");
+    let checkoutData = null;
+
+    // Load instant checkout data
+    async function loadInstantCheckout() {
+      if (!checkoutId) return window.location.href = "index.html";
+      const ref = doc(db, "instant-checkouts", checkoutId);
+      const snap = await getDoc(ref);
+      if (!snap.exists()) return window.location.href = "index.html";
+      checkoutData = snap.data();
+
+      // Replace skeleton with real product-info
+      cartItemsContainer.innerHTML = `
+        <div class="product-info">
+          <img src="${checkoutData.imageUrl}" alt="${checkoutData.productName}" />
+
+          <div>
+            <p style="font-weight:bold; color:#ffcb05; margin:0">${checkoutData.productName}</p>
+            <p style="margin:4px 0">Price: Rs ${checkoutData.productPrice} × ${checkoutData.quantity}</p>
+          </div>
+        </div>
+      `;
+      totalPriceField.textContent = `₨${checkoutData.productPrice * checkoutData.quantity}`;
+    }
+
+    // Auth state
+    onAuthStateChanged(auth, async user => {
+      if (!user) return window.location.href = "index.html";
+      await loadInstantCheckout();
+    });
+
+    // Confirm order
+    confirmBtn.addEventListener("click", async () => {
+      // Validate
+      const name  = document.getElementById("name").value.trim();
+      const addr  = document.getElementById("address").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const pay   = document.getElementById("payment").value;
+      const note  = document.getElementById("note").value.trim();
+      if (!name||!addr||!email||!phone||!pay) return alert("Fill all required fields");
+
+      confirmBtn.disabled = true;
+      confirmBtn.textContent = "Placing Order...";
+
+      // Save order
+      const orderId = `order_${Date.now()}`;
+      await setDoc(doc(db, "orders", orderId), {
+        userId: auth.currentUser.uid,
+        fullName: name, address: addr, email, phone, payment: pay, note,
+        items: [{ name: checkoutData.productName, price: checkoutData.productPrice, imageUrl: checkoutData.imageUrl, quantity: checkoutData.quantity }],
+        total: checkoutData.productPrice*checkoutData.quantity,
+
+        createdAt: new Date()
+      });
+
+      // Clean up instant-checkout
+      await deleteDoc(doc(db, "instant-checkouts", checkoutId));
+
+      // Redirect to summary
+      window.location.href = `order-summary.html?orderId=${orderId}`;
+    });
+  </script>
+</body>
+</html>

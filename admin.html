@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sadwal's Admin Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* --- Layout & Header --- */
+    body { margin:0; font-family:'Segoe UI',sans-serif; background:linear-gradient(135deg,#1f3b72,#4e73df); color:#333; display:flex; flex-direction:column; min-height:100vh; }
+    header {
+      background-color: #0e1a40;
+      color: white;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 4px solid #ffcb05;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+    .logo { width:117px; height:100px; margin-left:20px; }
+    header h1 { flex:2; margin:0 20px 0 10px; font-size:36px; color:#ffcb05; letter-spacing:1px; text-align:center; }
+
+    #googleLoginBtn { display:inline-flex; align-items:center; padding:6px 12px; background:#fff; border:1px solid #ccc; border-radius:4px; cursor:pointer; }
+    #googleLoginBtn img { width:20px; margin-right:8px; }
+
+    /* --- Profile Popup --- */
+    #profileContainer { position:relative; display:none; margin-right:20px; }
+    #profilePic { width:36px; height:36px; border-radius:50%; border:2px solid green; cursor:pointer; }
+    #profilePopup {
+      position: absolute;
+      top: 50px;
+      right: 0;
+      background: #0e1a40;
+      border: 2px solid #ffcb05;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(255, 203, 5, 0.3);
+      display: none;
+      width: 180px;
+      padding: 12px;
+      z-index: 999;
+    }
+    #profilePopup button {
+      background: #ffcb05;
+      color: #0e1a40;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin: 5px 0;
+      cursor: pointer;
+      width: 100%;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+    #profilePopup button:hover { background: #ffd700; }
+
+    /* --- Product Grid --- */
+    #products {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      padding: 20px;
+      list-style: none;
+      margin: 0;
+    }
+    #products li {
+      background-color: #333;
+      color: #ffcb05;
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+    #products li img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    #products li h3 {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    #products li p {
+      font-size: 14px;
+    }
+
+    /* --- Sections --- */
+    #login-section, #no-access, #admin-content { display:none; width:100%; flex:1; }
+
+    /* --- Message --- */
+    #no-access h2 { color:red; }
+
+    /* --- Product Form Container --- */
+    .container {
+      background-color: #1a1a2e;
+      color: #ffcb05;
+      padding: 30px;
+      margin: 30px auto;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      width: 60%;
+    }
+    .container h2 { text-align: center; font-size: 28px; margin-bottom:20px; }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { font-weight: bold; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      background-color: #333;
+      color: #ffcb05;
+      border: 2px solid #ffcb05;
+      border-radius: 8px;
+    }
+    .form-group textarea { resize: vertical; }
+    .btn-submit {
+      background: #ffcb05;
+      color: #0e1a40;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 20px;
+      transition: background 0.3s;
+    }
+    .btn-submit:hover { background: #ffd700; }
+
+    /* --- Footer --- */
+    footer { background:#0e1a40; color:#fff; text-align:center; padding:20px 0; border-top:4px solid #ffcb05; }
+    footer a { color:#ffcb05; text-decoration:none; }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html"><img src="https://i.ibb.co/9SPP0z5/image.png" class="logo" alt="Logo"></a>
+    <h1>ᴰᴵⱽᴵᴺᴱ Admin Panel</h1>
+    <button id="googleLoginBtn" onclick="signInWithGoogle()">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"> Sign in with Google
+    </button>
+    <div id="profileContainer">
+      <img id="profilePic" src="" alt="Profile" onclick="toggleProfilePopup()">
+      <div id="profilePopup">
+        <button onclick="signOutAndSignIn()">Switch Account</button>
+        <button onclick="logout()">Logout</button>
+        <button onclick="toggleProfilePopup()">Back</button>
+      </div>
+    </div>
+  </header>
+
+  <div id="login-section">
+    <!-- Optionally a welcome message -->
+  </div>
+
+  <div id="no-access">
+    <h2>Access Denied</h2>
+    <p>You are not authorized to access this page.</p>
+  </div>
+
+  <div id="admin-content">
+    <div class="container">
+      <h2>Add New Product</h2>
+      <form id="productForm">
+        <div class="form-group">
+          <label for="productName">Product Name</label>
+          <input type="text" id="productName" name="productName" required>
+        </div>
+        <div class="form-group">
+          <label for="productPrice">Price (RS)</label>
+          <input type="number" id="productPrice" name="productPrice" required>
+        </div>
+        <div class="form-group">
+          <label for="productImage">Product Image URL</label>
+          <input type="url" id="productImage" name="productImage" required>
+        </div>
+        <div class="form-group">
+          <label for="productCategory">Category</label>
+          <select id="productCategory" name="productCategory" required>
+            <option value="Electronics">Electronics</option>
+            <option value="Fashion">Fashion</option>
+            <option value="Home">Home</option>
+          </select>
+        </div>
+       
+        <button type="submit" class="btn-submit">Add Product</button>
+      </form>
+    </div>
+    <div id="productList" class="container">
+      <h2>Product List</h2>
+      <ul id="products"></ul>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 Sadwal's Best Store | <a href="terms.html">Terms of Service</a>
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+    import { getFirestore, doc, getDoc, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCXJiBXLNVnk0TSigI2bDA9kG4MgrXEQ40",
+      authDomain: "my-store-a881a.firebaseapp.com",
+      projectId: "my-store-a881a",
+      storageBucket: "my-store-a881a.appspot.com",
+      messagingSenderId: "749092459183",
+      appId: "1:749092459183:web:44afb5c6a91d2a787eba5a",
+      measurementId: "G-FLDGL3JF38"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+
+    window.signInWithGoogle = () => signInWithPopup(auth, provider).catch(console.error);
+    window.signOutAndSignIn = () => signOut(auth).then(() => signInWithGoogle());
+    window.logout = () => signOut(auth).then(() => location.reload());
+    window.toggleProfilePopup = () => {
+      const popup = document.getElementById('profilePopup');
+      popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
+    };
+
+    onAuthStateChanged(auth, async (user) => {
+      const loginBtn = document.getElementById('googleLoginBtn');
+      const profileContainer = document.getElementById('profileContainer');
+      const profilePic = document.getElementById('profilePic');
+      const loginSection = document.getElementById('login-section');
+      const adminContent = document.getElementById('admin-content');
+      const noAccess = document.getElementById('no-access');
+      const productsList = document.getElementById('products');
+
+      if (user) {
+        console.log('User:', user);
+        loginBtn.style.display = 'none';
+        profileContainer.style.display = 'inline-block';
+        profilePic.src = user.photoURL;
+
+        const adminRef = doc(db, 'admins', user.uid);
+        const snap = await getDoc(adminRef);
+        if (snap.exists()) {
+          loginSection.style.display = 'none';
+          noAccess.style.display = 'none';
+          adminContent.style.display = 'block';
+
+          // handle form submission
+          document.getElementById('productForm').addEventListener('submit', async e => {
+            e.preventDefault();
+            const name = e.target.productName.value;
+            const price = parseFloat(e.target.productPrice.value);
+            const imageUrl = e.target.productImage.value;
+            const category = e.target.productCategory.value;
+
+            await addDoc(collection(db, 'products'), { name, price, imageUrl, category });
+            alert('Product added');
+            e.target.reset();
+          });
+
+          // Fetch and display products
+          onSnapshot(collection(db, 'products'), (snapshot) => {
+            productsList.innerHTML = '';
+            snapshot.forEach(doc => {
+              const product = doc.data();
+              const li = document.createElement('li');
+              li.innerHTML = `
+                <img src="${product.imageUrl}" alt="${product.name}">
+                <h3>${product.name}</h3>
+                <p>${product.price} RS</p>
+                <p>Category: ${product.category}</p>
+              `;
+              productsList.appendChild(li);
+            });
+          });
+        } else {
+          window.location.href = "index.html";
+        }
+      } else {
+        loginBtn.style.display = 'inline-flex';
+        profileContainer.style.display = 'none';
+        adminContent.style.display = 'none';
+        noAccess.style.display = 'none';
+      }
+    });
+
+  </script>
+</body>
+</html>
