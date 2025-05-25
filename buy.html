@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Buy Now - Sadwal's Best Store</title>
+  <meta charset="UTF-8" />
+  <title>Buy Now – Sadwal’s Best Store</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -11,7 +12,6 @@
       padding: 0;
       color: #fff;
     }
-
     header {
       background-color: #0e1a40;
       color: #ffcb05;
@@ -20,7 +20,6 @@
       font-size: 28px;
       border-bottom: 4px solid #ffcb05;
     }
-
     .container {
       max-width: 500px;
       margin: 40px auto;
@@ -29,128 +28,120 @@
       border-radius: 10px;
       box-shadow: 0 8px 70px rgba(0,0,0,0.5);
     }
-
     h2 {
       text-align: center;
-      margin-bottom: 3px;
+      margin-bottom: 20px;
       color: #ffcb05;
     }
-
     label {
       display: block;
-      margin-bottom: 1px;
+      margin-bottom: 5px;
       font-weight: bold;
     }
-
-    input, select, textarea {
+    input, select, textarea, button {
       width: 100%;
-      padding: 7px;
+      padding: 10px;
+      margin-bottom: 20px;
       border: none;
       border-radius: 8px;
-      margin-bottom: 20px;
       font-size: 16px;
       outline: none;
     }
-
-    .invalid {
-      border: 2px solid red;
-    }
-
     .btn {
-      width: 100%;
       background-color: #ffcb05;
       color: #403e0e;
       font-size: 20px;
-      padding: 15px;
-      border: none;
-      border-radius: 35px;
       cursor: pointer;
       transition: background-color 0.3s ease;
     }
-
-    .btn:hover {
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
+    .btn:hover:not(:disabled) {
       background-color: #ffd700;
     }
-
     .back-link {
       display: block;
-      margin-top: 20px;
       text-align: center;
       color: #ccc;
       text-decoration: none;
+      margin-top: 10px;
     }
-
     .back-link:hover {
-      text-decoration: underline;
       color: #fff;
+      text-decoration: underline;
     }
-
     .error-msg {
       color: red;
       font-size: 13px;
+      margin-top: -15px;
+      margin-bottom: 10px;
     }
-
-    .payment-details {
-      display: none;
-    }
-
-    #productName, #price {
-      background: white;
-      color: #000000;
-      cursor: not-allowed;
-    }
-
     .product-info {
       margin-bottom: 20px;
       background-color: #2a2a3d;
       padding: 10px;
       border-radius: 8px;
+      overflow: hidden;
     }
-
-    /* Responsive Design */
-    @media screen and (max-width: 600px) {
-      .container {
-        padding: 15px;
-        margin: 20px;
-      }
-      .btn {
-        font-size: 18px;
-        padding: 12px;
-      }
+    .product-info img {
+      float: left;
+      margin-right: 15px;
+      border-radius: 8px;
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+    }
+    /* Skeleton */
+    .skeleton {
+      background: linear-gradient(90deg, #1a1a2e 25%, #0f3460 50%, #1a1a2e 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.2s infinite;
+      border-radius: 6px;
+      height: 20px;
+      margin-bottom: 10px;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
     }
   </style>
 </head>
 <body>
+  <header>Checkout – ᴰᴵⱽᴵᴺᴱ Products</header>
 
-  <header>Checkout - ᴰᴵⱽᴵᴺᴱ Products</header>
-
-  <div class="container">  
+  <div class="container">
     <h2>Complete Your Purchase</h2>
+    <div id="selected-items-container">
+      <!-- Skeleton placeholders -->
+      <div class="skeleton" style="width: 80%; height: 60px; border-radius: 8px;"></div>
+      <div class="skeleton" style="width: 60%; height: 60px; border-radius: 8px;"></div>
+    </div>
+    <h3 id="totalPriceField" style="color:#ffcb05;"></h3>
 
     <form id="orderForm">
-      <input type="text" id="productName" disabled>
-      <input type="text" id="price" disabled>
-
-      <label for="name" aria-label="Full Name">Full Name</label>
-      <input type="text" id="name" placeholder="Enter your name" required aria-required="true">
+      <label for="name">Full Name</label>
+      <input type="text" id="name" placeholder="Enter your name" required />
       <div class="error-msg" id="nameError"></div>
 
-      <label for="address" aria-label="Shipping Address">Shipping Address</label>
-      <input type="text" id="address" placeholder="Enter your address" required aria-required="true">
+      <label for="address">Shipping Address</label>
+      <input type="text" id="address" placeholder="Enter your address" required />
       <div class="error-msg" id="addressError"></div>
 
-      <label for="email" aria-label="Email Address">Email Address</label>
-      <input type="email" id="email" placeholder="Enter your email" required aria-required="true">
+      <label for="email">Email Address</label>
+      <input type="email" id="email" placeholder="Enter your email" required />
       <div class="error-msg" id="emailError"></div>
 
-      <label for="phone" aria-label="Phone Number">Phone Number (No spaces)</label>
-      <input type="tel" id="phone" name="phone" placeholder="03001234567" 
-             pattern="^03[0-9]{9}$" 
-             title="Enter without spaces, e.g., 03001234567" required aria-required="true">
+      <label for="phone">Phone Number (No spaces)</label>
+      <input type="tel" id="phone" placeholder="03001234567"
+             pattern="^03[0-9]{9}$"
+             title="Enter without spaces, e.g., 03001234567"
+             required />
       <div class="error-msg" id="phoneError"></div>
 
-      <label for="payment" aria-label="Payment Method">Payment Method</label>
-      <select id="payment" required aria-required="true">
+      <label for="payment">Payment Method</label>
+      <select id="payment" required>
         <option value="">Choose one</option>
         <option value="cod">Cash on Delivery</option>
         <option value="easypaisa">Easypaisa</option>
@@ -159,140 +150,145 @@
       </select>
       <div class="error-msg" id="paymentError"></div>
 
-      <!-- Payment Details -->
-      <div class="payment-details" id="cardDetails">
-        <label for="cardNumber" aria-label="Card Number">Card Number</label>
-        <input type="text" id="cardNumber" placeholder="Enter your card number">
-      </div>
-
-      <div class="payment-details" id="easypaisaDetails">
-        <label for="easypaisaNumber" aria-label="Easypaisa Number">Easypaisa Number</label>
-        <input type="text" id="easypaisaNumber" placeholder="Enter Easypaisa phone number">
-      </div>
-
-      <div class="payment-details" id="jazzcashDetails">
-        <label for="jazzcashNumber" aria-label="JazzCash Number">JazzCash Number</label>
-        <input type="text" id="jazzcashNumber" placeholder="Enter JazzCash phone number">
-      </div>
-
-      <label for="note" aria-label="Additional Notes">Additional Notes (Optional)</label>
+      <label for="note">Additional Notes (Optional)</label>
       <textarea id="note" placeholder="Any additional notes..." rows="4"></textarea>
 
-      <button type="button" class="btn" id="confirmBtn">Confirm Order</button>
+      <button type="submit" class="btn" id="confirmBtn" disabled>Loading...</button>
     </form>
 
     <a href="index.html" class="back-link">← Back to Products</a>
   </div>
+<div id="orderDetails"></div>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, collection, addDoc, setDoc, doc, Timestamp, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  <script>
-    const checkoutItems = JSON.parse(localStorage.getItem('checkoutItems')) || [];
-    const productNameField = document.getElementById('productName');
-    const priceField = document.getElementById('price');
+  const firebaseConfig = {
+    apiKey: "AIzaSyCXJiBXLNVnk0TSigI2bDA9kG4MgrXEQ40",
+    authDomain: "my-store-a881a.firebaseapp.com",
+    projectId: "my-store-a881a",
+    storageBucket: "my-store-a881a.firebasestorage.app",
+    messagingSenderId: "749092459183",
+    appId: "1:749092459183:web:44afb5c6a91d2a787eba5a",
+    measurementId: "G-FLDGL3JF38"
+  };
 
-    const totalPriceField = document.createElement('h3');
-    totalPriceField.style.color = '#ffcb05';
-    document.querySelector('.container').appendChild(totalPriceField);
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore();
 
-    // Group duplicates
-    const groupedItems = {};
-    checkoutItems.forEach(item => {
-      if (groupedItems[item.name]) {
-        groupedItems[item.name].quantity += 1;
-        groupedItems[item.name].total += parseFloat(item.price);
-      } else {
-        groupedItems[item.name] = {
-          name: item.name,
-          pricePerUnit: parseFloat(item.price),
-          quantity: 1,
-          total: parseFloat(item.price)
-        };
-      }
+  const selectedItemsContainer = document.getElementById("selected-items-container");
+  const totalPriceField        = document.getElementById("totalPriceField");
+  const confirmBtn             = document.getElementById("confirmBtn");
+  const orderForm              = document.getElementById("orderForm");
+  const orderDetails           = document.getElementById("orderDetails");
+
+  let currentUser = null;
+  let cartItems   = [];
+
+  // Load all orders for the user from 'cart-checkouts'
+  async function loadUserOrders(userId) {
+    const ordersRef = collection(db, "cart-checkouts");
+    const q = query(ordersRef, where("userId", "==", userId));
+    const querySnapshot = await getDocs(q);
+    const orders = [];
+    querySnapshot.forEach(docSnap => {
+      orders.push({ id: docSnap.id, ...docSnap.data() });
     });
+    return orders;
+  }
 
-    // Hide original inputs
-    productNameField.style.display = 'none';
-    priceField.style.display = 'none';
+  // Load the latest order's items
+  async function loadLatestOrderItems(userId) {
+    const orders = await loadUserOrders(userId);
+    if (orders.length === 0) return [];
+    orders.sort((a, b) => b.createdAt.seconds - a.createdAt.seconds); // newest first
+    return orders[0].items || [];
+  }
 
-    let totalPrice = 0;
-    Object.values(groupedItems).forEach(item => {
-      const productDiv = document.createElement('div');
-      productDiv.className = 'product-info';
-      productDiv.innerHTML = `
-        <p><strong>${item.name}</strong></p>
-        <p>Quantity: ${item.quantity}</p>
-        <p>Price per unit: RS${item.pricePerUnit}</p>
-        <p>Total: RS${item.total}</p>
-        <hr style="border: 0.5px solid #555;">
+  function displaySelectedItems(items) {
+    selectedItemsContainer.innerHTML = "";
+    if (items.length === 0) {
+      selectedItemsContainer.textContent = "Your cart/orders are empty.";
+      totalPriceField.textContent        = "";
+      confirmBtn.disabled               = true;
+      confirmBtn.textContent            = "No Items";
+      return;
+    }
+    items.forEach(item => {
+      const div = document.createElement("div");
+      div.className = "product-info";
+      div.innerHTML = `
+        <img src="${item.imageUrl}" alt="${item.name}" />
+        <div>
+          <strong>${item.name}</strong><br />
+          Rs ${item.price} × ${item.quantity} = Rs ${item.price * item.quantity}
+        </div>
       `;
-      totalPrice += item.total;
-      document.querySelector('.container').appendChild(productDiv);
+      selectedItemsContainer.appendChild(div);
     });
+    const totalPrice = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+    totalPriceField.textContent = "Total Price: Rs " + totalPrice;
+    confirmBtn.disabled = false;
+    confirmBtn.textContent = "Confirm Order";
+  }
 
-    totalPriceField.textContent = `Total Price: RS${totalPrice}`;
+  onAuthStateChanged(auth, async user => {
+    if (!user) {
+      selectedItemsContainer.textContent = "Please log in to proceed with checkout.";
+      confirmBtn.disabled               = true;
+      confirmBtn.textContent            = "Login required";
+      return;
+    }
+    currentUser = user;
+    cartItems   = await loadLatestOrderItems(user.uid);
+    displaySelectedItems(cartItems);
+  });
 
-    // Payment method logic
-    document.getElementById('payment').addEventListener('change', function () {
-      document.querySelectorAll('.payment-details').forEach(div => div.style.display = 'none');
-      const method = this.value;
-      if (method === 'card') {
-        document.getElementById('cardDetails').style.display = 'block';
-      } else if (method === 'easypaisa') {
-        document.getElementById('easypaisaDetails').style.display = 'block';
-      } else if (method === 'jazzcash') {
-        document.getElementById('jazzcashDetails').style.display = 'block';
-      }
-    });
+  orderForm.addEventListener("submit", async e => {
+    e.preventDefault();
+    if (!currentUser) return alert("Log in first");
+    if (!cartItems.length) return alert("Your cart is empty.");
 
-    document.getElementById('confirmBtn').addEventListener('click', function () {
-      let isValid = true;
+    const name    = document.getElementById("name").value.trim();
+    const address = document.getElementById("address").value.trim();
+    const email   = document.getElementById("email").value.trim();
+    const phone   = document.getElementById("phone").value.trim();
+    const payment = document.getElementById("payment").value;
+    const note    = document.getElementById("note").value.trim();
 
-      // Clear errors
-      ['nameError', 'addressError', 'emailError', 'phoneError', 'paymentError'].forEach(id => {
-        document.getElementById(id).textContent = '';
-      });
+    if (!name || !address || !email || !phone || !payment) {
+      return alert("Please fill in all required fields.");
+    }
 
-      const name = document.getElementById('name').value;
-      if (!name) {
-        isValid = false;
-        document.getElementById('nameError').textContent = 'Please enter your name.';
-      }
+    confirmBtn.disabled    = true;
+    confirmBtn.textContent = "Placing order...";
 
-      const address = document.getElementById('address').value;
-      if (!address) {
-        isValid = false;
-        document.getElementById('addressError').textContent = 'Please enter your address.';
-      }
+    try {
+      const ordersRef = collection(db, "cart-summary");
+      const newOrder  = {
+        userId:    currentUser.uid,
+        name, address, email, phone, payment, note,
+        items:     cartItems,
+        createdAt: Timestamp.now(),
+        status:    "pending",
+      };
+      const docRef = await addDoc(ordersRef, newOrder);
 
-      const email = document.getElementById('email').value;
-      if (!email || !/\S+@\S+\.\S+/.test(email)) {
-        isValid = false;
-        document.getElementById('emailError').textContent = 'Please enter a valid email address.';
-      }
+      // Clear cart-orders since order is placed
+      await setDoc(doc(db, "cart-orders", currentUser.uid), { items: [] }, { merge: true });
 
-      const phone = document.getElementById('phone').value;
-      if (!phone || !/^03\d{9}$/.test(phone)) {
-        isValid = false;
-        document.getElementById('phoneError').textContent = 'Please enter a valid phone number (without spaces).';
-      }
+      // Redirect with order ID
+      window.location.href = `cart-summary.html?orderId=${docRef.id}`;
+    } catch (err) {
+      alert("Failed: " + err.message);
+      confirmBtn.disabled    = false;
+      confirmBtn.textContent = "Confirm Order";
+    }
+  });
+</script>
 
-      const payment = document.getElementById('payment').value;
-      if (!payment) {
-        isValid = false;
-        document.getElementById('paymentError').textContent = 'Please select a payment method.';
-      }
-
-      if (isValid) {
-        localStorage.setItem('orderSummary', JSON.stringify(Object.values(groupedItems)));
-        localStorage.setItem('paymentMethod', payment);
-        localStorage.setItem('address', address);
-        window.location.href = 'confirmation.html';
-      }
-    });
-  </script>
-
-  <footer style="background-color: #0e1a40; color: white; text-align: center; padding: 20px; margin-top: 40px; border-top: 4px solid #ffcb05;">
-    <p style="margin: 0;">&copy; 2025 Sadwal's Best Store | <a href="terms.html" style="color: #ffcb05; text-decoration: none;">Terms of Service</a></p>
-  </footer>
 
 </body>
 </html>
