@@ -1,311 +1,508 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Your Cart</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #1f3b72, #4e73df);
-      margin: 0;
-      padding: 0;
-      color: #fff;
-    }
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ <style>
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #1f3b72, #4e73df);
+  margin: 0;
+  padding: 0;
+  color: #fff;
+}
 
-    header {
-      background-color: #0e1a40;
-      color: yellow;
-      padding: 20px;
-      text-align: center;
-      font-size: 24px;
-      border-bottom: 3px solid #ffcb05;
-    }
+header {
+  background-color: #0e1a40;
+  color: yellow;
+  padding: 20px;
+  text-align: center;
+  font-size: 24px;
+  border-bottom: 3px solid #ffcb05;
+}
 
-    .cart-container {
-      padding: 30px;
-      max-width: 900px;
-      margin: auto;
-      background: #1a1a2e;
-      border-radius: 15px;
-      margin-top: 40px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.4);
-    }
 
-    .cart-item {
-      display: flex;
-      align-items: center;
-      border-bottom: 1px solid #444;
-      padding: 15px 0;
-    }
+.cart-container {
+  padding: 30px;
+  max-width: 900px;
+  margin: 40px auto 0;
+  background: #1a1a2e;
+  border-radius: 15px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.4);
+}
 
-    .cart-item img {
-      width: 60px;
-      height: 60px;
-      object-fit: cover;
-      margin-right: 15px;
-      border-radius: 10px;
-    }
+.skeleton-box {
+  height: 10px;
+  background: linear-gradient(-90deg, #eeeeee 0%, #dddddd 50%, #eeeeee 100%);
+  background-size: 100% 100%;
+  animation: skeleton-loading 1.2s infinite;
+  margin-bottom: 2px;
+  border-radius: 8px;
+}
+@keyframes skeleton-loading {
+  0% { background-position: 20% 0; }
+  100% { background-position: -200% 0; }
+}
 
-    .cart-item label {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
 
-    .cart-item .name {
-      font-size: 18px;
-      font-weight: bold;
-    }
 
-    .cart-item .price {
-      font-size: 16px;
-      margin-left: auto;
-      color: #ffcb05;
-    }
+.cart-item {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #444;
+  padding: 15px 0;
+}
 
-    .empty-cart {
-      text-align: center;
-      padding: 50px 20px;
-    }
+.cart-item img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  margin-right: 15px;
+  border-radius: 10px;
+}
 
-    .empty-cart img {
-      width: 120px;
-      margin-bottom: 20px;
-      cursor: default;
-    }
+.cart-item label {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
 
-    .actions {
-      display: flex;
-      justify-content: center; /* Centers the buttons */
-      gap: 15px; /* Adds space between the buttons */
-      margin-top: 20px; /* Adds space between items and buttons */
-    }
+.cart-item .name {
+  font-size: 18px;
+  font-weight: bold;
+}
 
-    .back-button {
-      background-color: red;
-      color: #0e1a40;
-      padding: 12px 19px;
-      border: none;
-      border-radius: 7px;
-      cursor: pointer;
-      margin-top: 10px;
-      margin-bottom: 0.5px;
-      margin-left: 70px;
-      display: inline-block;
-    }
+.cart-item .price {
+font-weight: bold;
+  font-size: 16px;
+  margin-left: auto;
+  color: red;
+}
 
-    .back-button:hover {
-      background-color: #ffd700;
-    }
+.cart-item.selected {
+  box-shadow: 0 0 15px 3px #ffcb05;
+  transition: box-shadow 0.3s ease;
+}
 
-    .select-all {
-      background-color: red;
-      color: #0e1a40;
-      padding: 12px 19px;
-      border: none;
-      border-radius: 7px;
-      cursor: pointer;
-      margin-top: 10px;
-      margin-bottom: 0.5px;
-      margin-left: 800px;
-      display: inline-block;
-    }
 
-    .select-all:hover {
-      background-color: #ffd700;
-    }
+.actions {
+  max-width: 900px;
+  margin: 20px auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-    .popup {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: white;
-      color: black;
-      padding: 20px;
-      border-radius: 10px;
-      z-index: 1000;
-    }
+.back-button {
+   background-color: red;
+  color: #0e1a40;
+  padding: 12px 19px;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  margin-top: 1px;
+  margin-bottom: 0.5px;
+  display: inline-block;
+  transition: background-color 0.3s ease;
+  font-weight: bold;
+  font-size: 16px;
+  user-select: none;
+}
+ .select-all {
+  background-color: red;
+  color: #0e1a40;
+  padding: 12px 1px;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  margin-top: 1px;
+  margin-bottom: 0.5px;
+  display: inline-block;
+  transition: background-color 0.3s ease;
+  font-weight: bold;
+  font-size: 16px;
+  user-select: none;
+}
 
-    .popup-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 999;
-    }
+.back-button {
+  margin-left: 50px;
+}
 
-    .close-popup {
-      background-color: #ffcb05;
-      color: #0e1a40;
-      border: none;
-      padding: 10px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
+.select-all {
+  margin-left: 700px;
+}
 
-    .close-popup:hover {
-      background-color: #ffd700;
-    }
+.back-button:hover, .select-all:hover {
+  background-color: #ffd700;
+  color: #0e1a40;
+}
 
-    /* Mobile-First Design */
-    @media (max-width: 768px) {
-      .cart-item {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+.total-price {
+  max-width: 900px;
+  margin: 10px auto;
+  text-align: right;
+  font-size: 18px; font-weight: bold;
+  color: red;
+}
 
-      .select-all {
-        margin-top: 16px;
-        margin-left: auto;
-        margin-right: auto;
-        display: block;
-      }
+/* Buttons Remove Selected and Checkout Selected */
+.btn {
+  background-color: #ffcb05;
+  color: #0e1a40;
+  padding: 10px 2px;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  user-select: none;
+  transition: background-color 0.3s ease;
+}
 
-      .back-button {
-        margin-left: auto;
-        margin-right: auto;
-        display: block;
-      }
-    }
+.btn:hover {
+  background-color: #ffd700;
+}
 
-    /* Added yellow padding for Checkout and Remove buttons */
-    .btn {
-      background-color: #ffcb05;
-      color: #0e1a40;
-      padding: 12px 25px;
-      border: none;
-      border-radius: 7px;
-      cursor: pointer;
-    }
+@media (max-width: 768px) {
+  .cart-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .total-price {
+    text-align: center;
+  }
+  /* Center buttons on small screens */
+  .back-button, .select-all {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    display: block;
+    width: fit-content;
+  }
+  
+/* Warning popup styling consistent with buttons */
+#warning-popup {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: red;
+  color: #0e1a40;
+  padding: 12px 25px;
+  border-radius: 7px;
+  font-size: 16px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  display: none;
+  z-index: 1000;
+}
+.skeleton-loader {
+  padding: 29px;
+}
 
-    .btn:hover {
-      background-color: #ffd700;
-    }
+.skeleton {
+  background-color: #333;
+  border-radius: 5px;
+  margin-bottom: 19px;
+  animation: pulse 1.5s infinite ease-in-out;
+}
 
-  </style>
+.skeleton.title {
+  height: 20px;
+  width: 40%;
+}
+
+.skeleton.line {
+  height: 14px;
+  width: 40%;
+}
+
+.skeleton.line.short {
+  width: 20%;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+
+
+</style>
 </head>
 <body>
 
   <header>Your Shopping Cart</header>
 
-  <button class="back-button" onclick="window.location.href='index.html'">Back</button>
+  <div class="actions">
+    <button class="back-button" aria-label="Back to shop"> Back</button>
+    <button class="select-all" aria-label="Select all items">Select All</button>
+  </div>
 
-  <button class="select-all" onclick="toggleSelectAll()">Select All</button>
+ <div id="cart-skeleton" class="skeleton-loader">
+  <div class="skeleton">
+    <div class="skeleton title"></div>
+    <div class="skeleton line"></div>
+    <div class="skeleton line"></div>
+    <div class="skeleton line short"></div>
+  </div>
+  <div class="skeleton">
+    <div class="skeleton title"></div>
+    <div class="skeleton line"></div>
+    <div class="skeleton line"></div>
+    <div class="skeleton line short"></div>
+  </div>
+</div>
 
-  <div class="cart-container" id="cartContainer"></div>
+
+  <div class="cart-container" id="cartContainer" style="display:none;"></div>
+
+  <p id="emptyCartMessage" style="display:none; text-align:center; font-size:18px;">Your cart is empty.</p>
+
+  <div class="total-price">Total: RS <span id="totalPrice">0</span></div>
 
   <div class="actions">
-    <button class="btn" onclick="removeSelected()">Remove Selected</button>
-    <button class="btn" onclick="checkoutSelected()">Checkout</button>
+    <button class="btn remove" aria-label="Remove selected items">Remove Selected</button>
+    <button class="btn checkout" aria-label="Checkout selected items">Checkout Selected</button>
   </div>
 
-  <div class="popup-overlay" id="popupOverlay"></div>
-  <div class="popup" id="popup">
-    <h2>Warning</h2>
-    <p>Please select at least one product to proceed.</p>
-    <button class="close-popup" onclick="closePopup()">Close</button>
-  </div>
+  <div id="warning-popup" style="
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #c62828;
+    color: #fff;
+    padding: 15px 25px;
+    border-radius: 8px;
+    display: none;
+    font-size: 16px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    z-index: 1000;
+  ">Please select at least one item.</div>
 
-  <script>
-    const productsData = {
-      "Gaming Headset with Microphone and LED Lights": "https://i.ibb.co/0jJQ7q7K/Gaming-Headset-with-Microphone-and-LED-Lights.jpg",
-      "Poedagar Men's Stainless Steel Watch": "https://i.ibb.co/Cd4JJ4w/Poedagar-Men-Watch.jpg",
-      "Quartz Steel Band Wristwatch": "https://i.ibb.co/XkrzZjZf/Quartz-Steel-Band-Wristwatch.jpg"
+  <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = { apiKey: "AIzaSyCXJiBXLNVnk0TSigI2bDA9kG4MgrXEQ40",
+  authDomain: "my-store-a881a.firebaseapp.com",
+  projectId: "my-store-a881a",
+  storageBucket: "my-store-a881a.firebasestorage.app",
+  messagingSenderId: "749092459183",
+  appId: "1:749092459183:web:44afb5c6a91d2a787eba5a",
+  measurementId: "G-FLDGL3JF38" };
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const cartContainer     = document.getElementById("cartContainer");
+const skeletonLoader    = document.getElementById("cart-skeleton");
+const emptyCartMessage  = document.getElementById("emptyCartMessage");
+const totalPriceElement = document.getElementById("totalPrice");
+let cartItems = [];
+
+// Retry‐until‐success loader
+function waitForCartData(uid, retries = 6, delay = 500) {
+  const cartRef = doc(db, "cart-orders", uid);
+
+  return new Promise((resolve, reject) => {
+    const attempt = async (n) => {
+      try {
+        const snap = await getDoc(cartRef);
+        if (snap.exists()) {
+          const items = snap.data().items || [];
+          skeletonLoader.style.display   = "none";
+          cartContainer.style.display    = items.length ? "block" : "none";
+          emptyCartMessage.style.display = items.length ? "none" : "block";
+          renderCart(items);
+          resolve();  // resolve promise once data is loaded
+        } else if (n > 0) {
+          setTimeout(() => attempt(n - 1), delay);
+        } else {
+          skeletonLoader.style.display   = "none";
+          emptyCartMessage.style.display = "block";
+          totalPriceElement.textContent  = "0";
+          resolve();  // resolve even if no data found after retries
+        }
+      } catch (e) {
+        console.error("Error fetching cart:", e);
+        if (n > 0) setTimeout(() => attempt(n - 1), delay);
+        else {
+          skeletonLoader.style.display   = "none";
+          emptyCartMessage.style.display = "block";
+          resolve();  // resolve after error and no retries left
+        }
+      }
     };
 
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const selectedIndexes = new Set(JSON.parse(localStorage.getItem('selectedIndexes')) || []);
-    const cartContainer = document.getElementById('cartContainer');
-    const popup = document.getElementById('popup');
-    const popupOverlay = document.getElementById('popupOverlay');
+    attempt(retries);
+  });
+}
 
-    function renderCart() {
-      cartContainer.innerHTML = '';
+function renderCart(items) {
+  cartContainer.innerHTML = "";
+  if (!items.length) {
+    totalPriceElement.textContent = "0";
+    return;
+  }
+  cartItems = items;
+  // ... your existing renderCart implementation ...
+  let sum = 0;
+  items.sort((a,b)=>a.name.localeCompare(b.name))
+       .forEach(item => {
+    const el = document.createElement("div");
+    el.className = "cart-item";
+    el.innerHTML = `
+      <input type="checkbox" class="select-item" data-id="${item.id}">
+      <img src="${item.imageUrl}" />
+      <div class="item-info">
+        <h4 class="name">${item.name}</h4>
+        <p class="price">Rs ${item.price}</p>
+        <p>Qty:
+          <button class="quantity-btn" data-id="${item.id}" data-action="decrease">-</button>
+          <span id="qty-${item.id}">${item.quantity}</span>
+          <button class="quantity-btn" data-id="${item.id}" data-action="increase">+</button>
+        </p>
+      </div>`;
+    cartContainer.appendChild(el);
+    sum += item.price * item.quantity;
+  });
+  totalPriceElement.textContent = sum;
+  attachEvents();
+}
 
-      if (cart.length === 0) {
-        cartContainer.innerHTML = `
-          <div class="empty-cart">
-            <img src="https://cdn-icons-png.flaticon.com/512/2038/2038854.png" alt="Empty Cart">
-            <h2>Your cart is empty!</h2>
-            <p>Go back and add some products to check out.</p>
-            <button class="back-button" onclick="window.location.href='index.html'">Go to Shop</button>
-          </div>`;
-        return;
-      }
 
-      cart.forEach((item, index) => {
-        const image = productsData[item.name] || 'https://via.placeholder.com/60';
-        const itemDiv = document.createElement('div');
-        itemDiv.className = 'cart-item';
-        itemDiv.innerHTML = `
-          <label>
-            <input type="checkbox" class="select-item" data-index="${index}" ${selectedIndexes.has(index) ? 'checked' : ''}>
-            <img src="${image}" alt="${item.name}">
-            <span class="name">${item.name}</span>
-          </label>
-          <span class="price">RS${item.price}</span>
-        `;
-        cartContainer.appendChild(itemDiv);
-      });
+function attachEvents() {
+  // Quantity buttons
+  document.querySelectorAll(".quantity-btn").forEach(btn => {
+    const item = cartItems.find(i => i.id === btn.dataset.id);
+    btn.disabled = btn.dataset.action==="decrease" && item.quantity<=1;
+    btn.onclick = async e => {
+      const { id, action } = e.target.dataset;
+      const itm = cartItems.find(i=>i.id===id);
+      if (action==="increase") itm.quantity++;
+      else if (itm.quantity>1) itm.quantity--;
 
-      updateTotalPrice();
+      await updateDoc(doc(db, "cart-orders", auth.currentUser.uid), { items: cartItems });
+      renderCart(cartItems);
+      // After render, update total for selected items
+      updateSelectedTotal();
+    };
+  });
+
+  // Checkbox select/deselect
+  document.querySelectorAll(".select-item").forEach(cb => {
+    cb.onchange = () => updateSelectedTotal();
+  });
+
+  // Select all toggle
+  document.querySelector(".select-all").onclick = () => {
+    const all = [...document.querySelectorAll(".select-item")];
+    const selectAll = all.every(cb => cb.checked);
+    all.forEach(cb => cb.checked = !selectAll);
+    updateSelectedTotal();
+    document.querySelector(".select-all").textContent = !selectAll ? "Deselect All" : "Select All";
+  };
+
+  // Remove selected items
+  document.querySelector(".btn.remove").onclick = async () => {
+    const toRemove = [...document.querySelectorAll(".select-item:checked")]
+      .map(cb=>cb.dataset.id);
+    if (!toRemove.length) return showWarningPopup();
+    const filtered = cartItems.filter(i=>!toRemove.includes(i.id));
+    await setDoc(doc(db, "cart-orders", auth.currentUser.uid), { items: filtered }, { merge:true });
+    renderCart(filtered);
+    updateSelectedTotal();
+  };
+
+ document.querySelector(".btn.checkout").onclick = async () => {
+  const selectedCheckboxes = [...document.querySelectorAll(".select-item:checked")];
+
+  if (selectedCheckboxes.length === 0) {
+    showWarning("Please select at least one item.");
+    return;
+  }
+
+  const selectedItems = selectedCheckboxes.map(cb => {
+    const id = cb.dataset.id;
+    return cartItems.find(item => item.id === id);
+  });
+
+  try {
+    // Use the existing firestore db instance and auth.currentUser
+    if (!auth.currentUser) {
+      showWarning("User not authenticated.");
+      return;
     }
 
-    function updateTotalPrice() {
-      let totalPrice = 0;
-      selectedIndexes.forEach(index => {
-        totalPrice += cart[index].price;
-      });
-    }
+    const orderRef = await addDoc(collection(db, "cart-checkouts"), {
+      userId: auth.currentUser.uid,
+      createdAt: Timestamp.now(),
+      items: selectedItems
+    });
 
-    function toggleSelectAll() {
-      const checkboxes = document.querySelectorAll('.select-item');
-      const allSelected = Array.from(checkboxes).every(cb => cb.checked);
-      checkboxes.forEach(cb => cb.checked = !allSelected);
-      selectedIndexes.clear();
-      if (!allSelected) {
-        checkboxes.forEach(cb => selectedIndexes.add(parseInt(cb.dataset.index)));
-      }
-      localStorage.setItem('selectedIndexes', JSON.stringify(Array.from(selectedIndexes)));
-      updateTotalPrice();
-    }
+    // Optionally remove selected items from the user's cart:
+    const filtered = cartItems.filter(item => !selectedItems.some(sel => sel.id === item.id));
+    await setDoc(doc(db, "cart-orders", auth.currentUser.uid), { items: filtered }, { merge: true });
 
-    function removeSelected() {
-      const newCart = cart.filter((_, i) => !selectedIndexes.has(i));
-      localStorage.setItem('cart', JSON.stringify(newCart));
-      localStorage.removeItem('selectedIndexes');
-      location.reload();
-    }
+    // Redirect to buy.html with new order ID
+    window.location.href = `buy.html?id=${orderRef.id}`;
+  } catch (error) {
+    console.error("Error during checkout:", error);
+    showWarning("Something went wrong. Please try again.");
+  }
+};
 
-    function checkoutSelected() {
-      if (selectedIndexes.size === 0) {
-        showPopup();
-        return;
-      }
-      const selectedItems = cart.filter((_, i) => selectedIndexes.has(i));
-      localStorage.setItem('checkoutItems', JSON.stringify(selectedItems));
-      window.location.href = 'buy.html';
-    }
 
-    function showPopup() {
-      popup.style.display = 'block';
-      popupOverlay.style.display = 'block';
-    }
 
-    function closePopup() {
-      popup.style.display = 'none';
-      popupOverlay.style.display = 'none';
-    }
+function updateSelectedTotal() {
+  const sum = [...document.querySelectorAll(".select-item:checked")]
+    .reduce((acc, cb) => {
+      const itm = cartItems.find(i=>i.id===cb.dataset.id);
+      return acc + (itm.price * itm.quantity);
+    }, 0);
+  totalPriceElement.textContent = sum;
+  document.querySelector(".select-all").textContent = sum ? "Deselect All" : "Select All";
+}
+function showWarning(message = "Please select at least one item.") {
+  const popup = document.getElementById("warning-popup");
+  popup.textContent = message;
+  popup.style.display = "block";
+  setTimeout(() => popup.style.display = "none", 2500);
+}
+};
+onAuthStateChanged(auth, async user => {
+  if (!user) return window.location.href = "index.html";
+  
+  // Call your retry loader here (which is async)
+  await waitForCartData(user.uid);
 
-    renderCart();
-  </script>
+  document.querySelector(".back-button")
+    .onclick = () => window.location.href = "index.html";
 
-  <footer style="background-color: #0e1a40; color: white; text-align: center; padding: 20px; margin-top: 40px; border-top: 4px solid #ffcb05;">
+  const ref = doc(db, "cart-orders", user.uid);
+  const snap = await getDoc(ref);
+  const items = snap.exists() ? snap.data().items || [] : [];
+
+  skeletonLoader.style.display   = "none";
+  cartContainer.style.display    = items.length ? "block" : "none";
+  emptyCartMessage.style.display = items.length ? "none" : "block";
+  renderCart(items);
+
+  document.querySelector(".back-button")
+    .onclick = () => window.location.href = "index.html";
+});
+</script>
+
+<footer style="background-color: #0e1a40; color: white; text-align: center; padding: 20px; margin-top: 40px; border-top: 4px solid #ffcb05;">
     <p style="margin: 0;">&copy; 2025 Sadwal's Best Store | <a href="terms.html" style="color: #ffcb05; text-decoration: none;">Terms of Service</a></p>
   </footer>
 
