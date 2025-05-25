@@ -3,358 +3,584 @@
 <head>
   <meta charset="UTF-8">
   <title>Sadwal's Best Store</title>
-  <meta name="description" content="Welcome to Sadwal's Best Store, your one-stop shop for amazing products!">
-  
-  <!-- Firebase & Google Identity Services -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js" defer></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js" defer></script>
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js" defer></script>
-
-                  <meta name="google-signin-client_id" content="749092459183-9c3f4np76l5b59hgrc0eg3lavk9nqaa8.apps.googleusercontent.com">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+    /* --- Layout & Header --- */
     body {
+      margin: 0;
       font-family: 'Segoe UI', sans-serif;
       background: linear-gradient(135deg, #1f3b72, #4e73df);
-      margin: 0;
-      padding: 0;
       color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
-
     header {
       background-color: #0e1a40;
       color: white;
-      padding: 20px;
-      text-align: center;
-      border-bottom: 4px solid #ffcb05;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      padding: 15px;
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: space-between;
+      border-bottom: 5px solid #ffcb05;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     }
-
-    header h1 {
-      font-size: 36px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: #ffcb05;
-      flex: 1;
-    }
-
-    .logo {
-      width: 117px;
-      height: 100px;
-      margin-left: 40px;
-    }
-
-    .search-bar {
-      width: 400px;
-      height: 50px;
-      margin-left: 4px;
-    }
-
-    .search-bar input[type="text"] {
-      padding: 10px 15px;
-      border: 2px solid #ffcb05;
-      border-radius: 25px;
-      width: 200px;
-      font-size: 16px;
+    .logo { width: 117px; height: 100px; }
+    header h1 { flex: 2; margin: 0 20px; font-size: 36px; color: #ffcb05; }
+    .search-bar { flex-grow: 1; display: flex; align-items: center; }
+    .search-bar input {
+      padding: 10px;
+      border: 3px solid #ffcb05;
+      border-radius: 25px 0 0 25px;
+      width: 250px;
       outline: none;
     }
-
     .search-bar button {
-      padding: 15px 17px;
+      padding: 10px;
       border: none;
-      background-color: #ffcb05;
-      color: #0e1a40;
-      border-radius: 25px;
+      background: #ffcb05;
+      color: #0e73df;
+      border-radius: 0 25px 25px 0;
       cursor: pointer;
-      font-weight: bold;
-      font-size: 14px;
     }
-
-    .auth-buttons, .logout-buttons {
-      margin-top: 10px;
+    #cart-container {
+      position: relative;
       display: flex;
-      justify-content: center;
-      gap: 10px;
+      align-items: center;
+      cursor: pointer;
+      margin-left: 10px;
     }
-
-    .auth-btn {
-      padding: 10px 16px;
-      background-color: #ffcb05;
-      color: #0e1a40;
-      border-radius: 25px;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 16px;
-      border: none;
+    #cart-icon-img { width: 28px; height: 28px; }
+    #cart-count {
+      position: absolute;
+      top: -6px;
+      right: -8px;
+      background: green;
+      color: white;
+      font-size: 12px;
+      padding: 1px 5px;
+      border-radius: 50%;
+    }
+    #googleLoginBtn {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 12px;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 4px;
       cursor: pointer;
     }
+    #googleLoginBtn img { width: 20px; margin-right: 8px; }
+    #profileContainer { position: relative; display: inline-block; margin-left: 20px; }
+    #profilePic {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid yellow;
+  cursor: pointer;
+  position: relative; /* keep for stacking context */
+  z-index: 10;       /* above popup if needed */
+}
 
-    .product-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 25px;
-      padding: 30px;
-    }
 
-    .product-card {
-      background: linear-gradient(to top right, #ffffff, #f0f0f5);
-      border-radius: 12px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-      transition: transform 0.3s;
-    }
+#profilePopup {
+  position: absolute;
+  top: 50%;          /* vertical center relative to container */
+  left: 0;           /* align left edge with container's left */
+  transform: translate(-110%, -20%); /* shift popup fully to left and vertically center */
+  background: #0e1a40;
+  color: #ffcb05;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  display: none;
+  width: 130px;
+  padding: 5px;
+  z-index: 20;       /* above image */
+}
 
-    .product-card:hover {
-      transform: translateY(-8px);
-    }
-
-    .product-image img {
+    #profilePopup button {
       width: 100%;
-      height: 220px;
-      object-fit: cover;
-      border-bottom: 3px solid #4e73df;
-    }
-
-    .product-info {
-      padding: 15px;
-      text-align: center;
-    }
-
-    .product-info h3 {
-      font-size: 18px;
-      color: #1f3b72;
-      margin: 10px 0;
-    }
-
-    .product-info p {
-      margin: 10px 0;
-      font-size: 16px;
-    }
-
-    .price {
-      font-weight: bold;
-      font-size: 18px;
-      margin-bottom: 10px;
-    }
-
-    .price del {
-      color: #dc3545;
-      font-size: 14px;
-      margin-right: 5px;
-    }
-
-    .price strong {
-      color: #28a745;
-    }
-
-    .btn, .btn-cart {
-      border-radius: 25px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      margin-top: 10px;
-      padding: 10px 20px;
-    }
-
-    .btn {
-      background-color: #1f3b72;
-      color: #fff;
+      background: #ffcb05;
+      color: #0e73df;
       border: none;
+      border-radius: 8px;
+      padding: 8px;
+      margin: 5px 0;
+      cursor: pointer;
+      font-size: 14px;
     }
-
-    .btn:hover {
-      background-color: #4e73df;
-    }
-
-    .btn-cart {
-      background-color: transparent;
-      border: 2px solid #ffcb05;
-      color: #ffcb05;
-    }
-
-    .btn-cart:hover {
-      background-color: #ffcb05;
-      color: #0e1a40;
-    }
-
-    .popup {
+    #popupCart, #loginPrompt {
       display: none;
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0, 0, 0, 0.7);
+      background: rgba(0,0,0,0.7);
       z-index: 1000;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
     }
-
     .popup-content {
-      background-color: #1a1a2e;
+      background: #1a1a2e;
+      color: #ffcb05;
       padding: 30px;
       border-radius: 15px;
-      color: #ffcb05;
       text-align: center;
-      max-width: 500px;
+      max-width: 300px;
+      width: 90%;
     }
-
-    .popup .btn {
-      background-color: #ffcb05;
-      color: #0e1a40;
+    .popup-content .btn {
       width: 100%;
+      margin-top: 15px;
+      background: #ffcb05;
+      color: #0e73df;
       border: none;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .product-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 13px;
+      margin: 20px;
+      flex: 1;
+    }
+    .product-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .product-image img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+    }
+    .product-info {
+      padding: 10px;
+      text-align: center;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .product-info h3 { margin: 5px 0; color: red; font-size: 18px; }
+    .price { font-size: 18px; margin-bottom: 10px; }
+    .btn, .btn-cart {
+      margin: 5px;
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background .3s;
+    }
+    .btn { background: #1f3b72; color: #fff; border: none; }
+    .btn:hover { background: #4e73df; }
+    .btn-cart {
+      background: transparent;
+      border: 2px solid #ffcb05;
+      color: #ffcb05;
+    }
+    .btn-cart:hover { background: #ffcb05; color: #0e73df; }
+    #loading { text-align: center; padding: 20px; font-weight: bold; }
+    #offlineMsg { display: none; color: red; text-align: center; font-weight: bold; margin: 20px; }
+    footer {
+      background: #0e1a40;
+      color: #fff;
+      text-align: center;
+      padding: 20px 0;
+      border-top: 4px solid #ffcb05;
+      margin-top: auto;
+    }
+    footer a { color: #ffcb05; text-decoration: none; }
+    @media(max-width:600px) {
+      header h1 { font-size: 28px; }
+      .search-bar input { width: 150px; }
+    }
+ /* --- Mangekyō & Genjutsu Effects --- */
+    #mangekyoOverlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(30, 0, 0, 0.9);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1100;
+    }
+    #mangekyoOverlay.active { display: flex; }
+    #mangekyoOverlay img {
+      width: 180px; height: 180px; pointer-events: none;
+      animation: mangekyoAnim 2s ease-out forwards;
+    }
+    @keyframes mangekyoAnim {
+      from { transform: scale(0) rotate(0deg); opacity: 0; }
+      to { transform: scale(2) rotate(360deg); opacity: 1; }
+    }
+@keyframes sharinganRotate {
+  from   { transform: scale(1) rotate(0deg); }
+  to     { transform: scale(6) rotate(360deg); }
+}
+
+#genjutsuGlitch.active #sharinganZoom {
+  opacity: 1;
+  animation: sharinganRotate 2.5s ease forwards;
+}
+
+    #genjutsuFlash {
+      position: fixed; top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: white; opacity: 0;
+      pointer-events: none; z-index: 9999;
+      transition: opacity 0.1s ease;
     }
 
-    /* Responsive Design */
-    @media (max-width: 600px) {
-      .search-bar {
-        width: 100%;
-      }
+    #genjutsuGlitch {
+      position: fixed; top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(255, 0, 0, 0.1);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; z-index: 9998;
+      animation: none;
     }
+
+    #sharinganZoom {
+      width: 80px; opacity: 0; transform: scale(1);
+      transition: transform 2.5s ease, opacity 0.4s ease;
+    }
+
+    #genjutsuGlitch.active {
+      opacity: 1;
+      animation: glitchEffect 0.4s linear infinite;
+    }
+    #genjutsuGlitch.active #sharinganZoom {
+      opacity: 3;
+      transform: scale(6);
+    }
+    @keyframes glitchEffect {
+      0% { background: rgba(255,0,0,0.05); }
+      50% { background: rgba(255,0,0,0.2); }
+      100% { background: rgba(255,0,0,0.05); }
+    }
+
+
+
   </style>
-
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyCgMCB7APsNUOdnY8XROaA4PS95eQILnXs",
-      authDomain: "my-store-a881a.firebaseapp.com",
-      projectId: "my-store-a881a",
-      appId: "1:749092459183:web:44afb5c6a91d2a787eba5a"
-    };
-    firebase.initializeApp(firebaseConfig);
-
-    function handleCredentialResponse(response) {
-      const data = jwt_decode(response.credential);
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('userName', data.name);
-      updateAuthUI();
-    }
-
-    function logout() {
-      localStorage.removeItem('isLoggedIn');
-      localStorage.removeItem('userName');
-      updateAuthUI();
-      alert("You have logged out.");
-    }
-
-    function updateAuthUI() {
-      const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
-      document.querySelector('.auth-buttons').style.display = loggedIn ? 'none' : 'flex';
-      document.querySelector('.logout-buttons').style.display = loggedIn ? 'flex' : 'none';
-      document.getElementById('welcome-user').textContent = loggedIn ? `Welcome, ${localStorage.getItem('userName')}` : '';
-    }
-
-    window.onload = updateAuthUI;
-
-    function addToCart(name, price) {
-      const cart = JSON.parse(localStorage.getItem('cart')) || [];
-      cart.push({ name, price });
-      localStorage.setItem('cart', JSON.stringify(cart));
-      document.getElementById('popupCart').style.display = 'flex';
-    }
-
-    function closePopup() {
-      document.getElementById('popupCart').style.display = 'none';
-    }
-
-    function buyProduct(name, price) {
-      localStorage.setItem('productName', name);
-      localStorage.setItem('price', price);
-      window.location.href = 'buy.html';
-    }
-  </script>
 </head>
 <body>
 
-<div id="popupCart" class="popup">
-  <div class="popup-content">
-    <h2>Item Added to Cart!</h2>
-    <p>Your product has been successfully added to the cart.</p>
-    <button class="btn" onclick="window.location.href='cart.html'">Go to Cart</button>
-    <button class="btn" onclick="closePopup()">Continue Shopping</button>
-  </div>
-</div>
-
-<header>
-  <a href="index.html">
-    <img src="https://i.ibb.co/9SPP0z5/image.png" alt="Sadwal's Best Store Logo" class="logo">
-  </a>
-  <h1>ᴰᴵⱽᴵᴺᴱ Products</h1>
-  <div class="search-bar">
-    <input type="text" placeholder="Search products..." aria-label="Search products">
-    <button>Search</button>
-  </div>
-  <div class="auth-buttons">
-    <div id="g_id_onload"
-     data-client_id="749092459183-9c3f4np76l5b59hgrc0eg3lavk9nqaa8.apps.googleusercontent.com"
-
-         data-context="signin"
-         data-ux_mode="popup"
-         data-callback="handleCredentialResponse"
-         data-auto_prompt="false">
-    </div>
-    <div class="g_id_signin"
-         data-type="standard"
-         data-shape="pill"
-         data-theme="outline"
-         data-text="sign_in_with"
-         data-size="large"
-         data-logo_alignment="left">
+  <!-- Add-to-Cart Confirmation -->
+  <div id="popupCart">
+    <div class="popup-content">
+      <h2>Item Added to Cart!</h2>
+      <button class="btn go-to-cart">Go to Cart</button>
+      <button class="btn" onclick="closeCartPopup()">Continue Shopping</button>
     </div>
   </div>
-  <div class="logout-buttons" style="display: none;">
-    <span id="welcome-user" style="color: white; font-weight: bold;"></span>
-    <button class="auth-btn" onclick="logout()">Logout</button>
-  </div>
-</header>
 
-<div class="product-container">
- <!-- Product 1 -->
-<div class="product-card">
-  <div class="product-image">
-    <img src="https://i.ibb.co/0jJQ7q7K/Gaming-Headset-with-Microphone-and-LED-Lights.jpg" alt="Gaming Headset with Microphone and LED Lights">
+  <!-- Login Prompt Modal -->
+  <div id="loginPrompt">
+    <div class="popup-content">
+      <h2>Please Login to Buy Product</h2>
+      <button class="btn" onclick="signInWithGoogle()">Login</button>
+      <button class="btn" onclick="closeLoginPrompt()">Back</button>
+    </div>
   </div>
-  <div class="product-info">
-    <h3>Gaming Headset with Microphone and LED Lights</h3>
-    <p class="price"><strong>RS5,000</strong></p>
-    <button class="btn" onclick="buyProduct('Gaming Headset with Microphone and LED Lights', 5000)">Buy Now</button>
-    <button class="btn-cart" onclick="addToCart('Gaming Headset with Microphone and LED Lights', 5000)">Add to Cart</button>
-  </div>
+
+  <!-- Overlays -->
+  <div id="mangekyoOverlay"><img src="https://i.ibb.co/Wvt0zRS3/png-transparent-red-and-black-naruto-mangekyou-sharingan-eye-illustration-sasuke-uchiha-itachi-uchih.png" alt="Mangekyo Sharingan" /></div>
+  <div id="genjutsuFlash"></div>
+  <div id="genjutsuGlitch"><img src="https://i.ibb.co/Wvt0zRS3/png-transparent-red-and-black-naruto-mangekyou-sharingan-eye-illustration-sasuke-uchiha-itachi-uchih.png" alt="Sharingan" id="sharinganZoom"></div>
+  <audio id="bg-music-index" src="audio/part1.mp3" preload="auto"></audio>
+
+
+
+
+
+
+  <header>
+    <a href="index.html"><img src="https://i.ibb.co/9SPP0z5/image.png" class="logo" alt="Logo"></a>
+    <h1>ᴰᴵⱽᴵᴺᴱ Products</h1>
+    <div class="search-bar">
+      <input type="text" placeholder="Search products…">
+      <button>Search</button>
+      <div id="cart-container" onclick="location.href='cart.html'">
+        <img src="https://cdn-icons-png.flaticon.com/512/2038/2038854.png" id="cart-icon-img" alt="Cart">
+        <span id="cart-count">0</span>
+      </div>
+    </div>
+    <button id="googleLoginBtn" onclick="signInWithGoogle()">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"> Sign in with Google
+    </button>
+    <div id="profileContainer">
+      <img id="profilePic" src="" alt="Profile" style="position: relative; display: inline-block;">
+
+      <div id="profilePopup">
+  <button id="switchAccountBtn">Switch Account</button><br>
+  <button id="logoutBtn">Logout</button><br>
+  <button id="closeProfilePopupBtn">Close</button>
 </div>
+    </div>
+  </header>
+
+  <main>
+    <div id="offlineMsg">You are offline. Some features may not work.</div>
+    <div id="loading">Loading products...</div>
+    <div class="product-container"></div>
+  </main>
+
+  <footer>
+    &copy; 2025 Sadwal's Best Store | <a href="terms.html">Terms of Service</a>
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import {
+      getAuth, onAuthStateChanged, signInWithPopup,
+      GoogleAuthProvider, signOut, setPersistence,
+      browserLocalPersistence
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import {
+      getFirestore, collection, getDocs,
+      doc, getDoc, setDoc, addDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCXJiBXLNVnk0TSigI2bDA9kG4MgrXEQ40",
+      authDomain: "my-store-a881a.firebaseapp.com",
+      projectId: "my-store-a881a",
+      storageBucket: "my-store-a881a.appspot.com",
+      messagingSenderId: "749092459183",
+      appId: "1:749092459183:web:44afb5c6a91d2a787eba5a",
+      measurementId: "G-FLDGL3JF38"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Google Sign-In
+    async function signInWithGoogle() {
+      try {
+        await setPersistence(auth, browserLocalPersistence);
+        await signInWithPopup(auth, new GoogleAuthProvider());
+      } catch (e) {
+        alert("Login failed: " + e.message);
+      }
+    }
+    window.signInWithGoogle = signInWithGoogle;
+
+   const profilePic = document.getElementById("profilePic");
+const profilePopup = document.getElementById("profilePopup");
+
+function toggleProfilePopup() {
+  // Just toggle the display, no boundingClientRect needed
+  const isVisible = profilePopup.style.display === "block";
+  profilePopup.style.display = isVisible ? "none" : "block";
+}
 
 
-<!-- Product 2 -->
-<div class="product-card">
-  <div class="product-image">
-    <img src="https://i.ibb.co/Cd4JJ4w/Poedagar-Men-Watch.jpg" alt="Poedagar Men's Stainless Steel Watch">
-  </div>
-  <div class="product-info">
-    <h3>Poedagar Men's Stainless Steel Watch</h3>
-    <p class="price"><del>RS5000</del> <strong>RS4250</strong> <span style="color: orange;">(15% OFF)</span></p>
-    <button class="btn" onclick="buyProduct('Poedagar Men\'s Stainless Steel Watch', 4250)">Buy Now</button>
-    <button class="btn-cart" onclick="addToCart('Poedagar Men\'s Stainless Steel Watch', 4250)">Add to Cart</button>
-  </div>
-</div>
+profilePic.addEventListener("click", toggleProfilePopup);
 
-<!-- Product 3 -->
-<div class="product-card">
-  <div class="product-image">
-    <img src="https://i.ibb.co/XkrzZjZf/Quartz-Steel-Band-Wristwatch.jpg" alt="Quartz Steel Band Wristwatch">
-  </div>
-  <div class="product-info">
-    <h3>Quartz Steel Band Wristwatch</h3>
-    <p class="price"><strong>RS22,400</strong></p>
-    <button class="btn" onclick="buyProduct('Quartz Steel Band Wristwatch', 22400)">Buy Now</button>
-    <button class="btn-cart" onclick="addToCart('Quartz Steel Band Wristwatch', 22400)">Add to Cart</button>
-  </div>
-</div>
-</div>
-    <footer style="background-color: #0e1a40; color: white; text-align: center; padding: 20px; margin-top: 40px; border-top: 4px solid #ffcb05;">
-  <p style="margin: 0;">&copy; 2025 Sadwal's Best Store | <a href="terms.html" style="color: #ffcb05; text-decoration: none;">Terms of Service</a></p>
-</footer>
+// Close popup on close button
+document.getElementById("closeProfilePopupBtn").addEventListener("click", () => {
+  profilePopup.style.display = "none";
+});
 
+// Logout button action
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  profilePopup.style.display = "none";
+  signOut(auth).then(() => {
+    alert("Logged out successfully.");
+  }).catch(console.error);
+});
 
+// You can add switch account logic as you want here:
+document.getElementById("switchAccountBtn").addEventListener("click", () => {
+  alert("Switch Account clicked (implement logic here)");
+});
+
+onAuthStateChanged(auth, (user) => {
+  const profileContainer = document.getElementById("profileContainer");
+  const googleLoginBtn = document.getElementById("googleLoginBtn");
+
+  if (user) {
+    // User is signed in
+    const photoURL = user.photoURL;
+    profilePic.src = photoURL;
+    profileContainer.style.display = "inline-block";
+    googleLoginBtn.style.display = "none";
+  } else {
+    // User is signed out
+    profilePic.src = "";
+    profileContainer.style.display = "none";
+    googleLoginBtn.style.display = "inline-flex";
+  }
+});
+
+    onAuthStateChanged(auth, user => {
+      const loginBtn = document.getElementById("googleLoginBtn");
+      const profileContainer = document.getElementById("profileContainer");
+      if (user) {
+        loginBtn.style.display = "none";
+        profileContainer.style.display = "inline-block";
+ document.getElementById("profilePic").src = user.photoURL; 
+        updateCartCount();
+      } else {
+        loginBtn.style.display = "inline-flex";
+        profileContainer.style.display = "none";
+      }
+    });
+
+    // Fetch and render products
+    async function fetchProducts() {
+      document.getElementById("loading").style.display = "block";
+      const container = document.querySelector(".product-container");
+      container.innerHTML = "";
+      try {
+        const snap = await getDocs(collection(db, "products"));
+        if (snap.empty) {
+          container.innerHTML = "<p>No products available.</p>";
+        } else {
+          snap.forEach(docSnap => {
+            const p = docSnap.data();
+            p.id = docSnap.id;
+            const imageUrl = p.imageUrl?.trim() || 'https://i.ibb.co/9SPP0z5/image.png';
+            const card = document.createElement("div");
+            card.className = "product-card";
+            card.innerHTML = `
+              <div class="product-image">
+                <img src="${imageUrl}" alt="${p.name}" onerror="this.onerror=null;this.src='https://i.ibb.co/9SPP0z5/image.png';">
+              </div>
+              <div class="product-info">
+                <h3>${p.name}</h3>
+                <p class="price"><strong>RS${p.price}</strong></p>
+                <button class="btn buy-now">Buy Now</button>
+                <button class="btn-cart">Add to Cart</button>
+              </div>
+            `;
+            container.appendChild(card);
+            card.querySelector(".btn-cart").addEventListener("click", () => addToCart(p));
+            card.querySelector(".buy-now").addEventListener("click", () => instantCheckout(p));
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        container.innerHTML = "<p>Error loading products.</p>";
+      } finally {
+        document.getElementById("loading").style.display = "none";
+      }
+    }
+
+    // Add to Cart
+    async function addToCart(product) {
+      const user = auth.currentUser;
+      if (!user) return alert("Please log in to add items to your cart.");
+      document.getElementById("popupCart").style.display = "flex";
+      const cartRef = doc(db, "cart-orders", user.uid);
+      try {
+        const snap = await getDoc(cartRef);
+        const items = snap.exists() ? snap.data().items || [] : [];
+        const idx = items.findIndex(i => i.id === product.id);
+        if (idx > -1) {
+          items[idx].quantity += 1;
+        } else {
+          items.push({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            imageUrl: product.imageUrl || 'https://i.ibb.co/9SPP0z5/image.png',
+            quantity: 1
+          });
+        }
+        await setDoc(cartRef, { items, userId: user.uid }, { merge: true });
+        updateCartCount();
+      } catch (e) {
+        console.error("Cart Error:", e);
+      }
+    }
+
+    // Update cart count
+    function updateCartCount() {
+      const user = auth.currentUser;
+      if (!user) return;
+      getDoc(doc(db, "cart-orders", user.uid)).then(snap => {
+        const items = snap.exists() ? snap.data().items || [] : [];
+        const count = items.reduce((sum, i) => sum + i.quantity, 0);
+        document.getElementById("cart-count").textContent = count;
+      });
+    }
+
+  async function instantCheckout(product) {
+  const user = auth.currentUser;
+  if (!user) {
+    document.getElementById("loginPrompt").style.display = "flex";
+    return;
+  }
+
+  // 1. Fetch the full product document to get imageUrl
+  const prodRef = doc(db, "products", product.id);
+  const prodSnap = await getDoc(prodRef);
+  if (!prodSnap.exists()) {
+    alert("Product data missing!");
+    return;
+  }
+  const fullProduct = prodSnap.data();
+
+  // 2. Write the checkout doc, including imageUrl from Firestore
+  const checkoutRef = await addDoc(collection(db, "instant-checkouts"), {
+    userId:        user.uid,
+    email:         user.email,
+    productName:   fullProduct.name,
+    productPrice:  fullProduct.price,
+    quantity:      1,
+    imageUrl:      fullProduct.imageUrl || 'https://i.ibb.co/9SPP0z5/image.png',
+    createdAt:     new Date()
+  });
+
+  // 3. Redirect to the checkout page
+  window.location.href = `instant-buy.html?checkoutId=${checkoutRef.id}`;
+}
+
+    // Close Cart Popup
+    window.closeCartPopup = () => {
+      document.getElementById("popupCart").style.display = "none";
+    };
+
+    // Online/Offline status
+    function checkOnlineStatus() {
+      document.getElementById("offlineMsg").style.display = navigator.onLine ? "none" : "block";
+    }
+    window.addEventListener("online", checkOnlineStatus);
+    window.addEventListener("offline", checkOnlineStatus);
+    checkOnlineStatus();
+ // Genjutsu transition
+    const goToCartBtn = document.querySelector(".go-to-cart");
+    const flash = document.getElementById("genjutsuFlash");
+    const glitch = document.getElementById("genjutsuGlitch");
+    const music = document.getElementById("bg-music-index");
+
+    if (goToCartBtn) {
+      goToCartBtn.addEventListener("click", () => {
+        document.getElementById("popupCart").style.display = "none";
+        // Flash
+        flash.style.opacity = 1;
+        setTimeout(() => flash.style.opacity = 0, 100);
+        // Glitch & zoom
+        glitch.classList.add("active");
+        // Sound
+        music.currentTime = 0;
+        music.play().catch(e => console.warn("Audio error:", e));
+        // Redirect
+        setTimeout(() => window.location.href = "cart.html", 2700);
+      });
+    }
+
+    // Initial fetch
+    fetchProducts();
+  </script>
 </body>
 </html>
