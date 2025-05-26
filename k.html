@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sadwal's Best Store</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Global Styles & Layout */
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif; /* Changed font to Inter */
+      background: linear-gradient(135deg, #1f3b72, #4e73df);
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* Header */
+    header {
+      background-color: #0e1a40;
+      color: white;
+      padding: 15px 20px; /* Increased padding */
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 5px solid #ffcb05;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4); /* Stronger shadow */
+      flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    }
+
+    .logo {
+      width: 117px;
+      height: 100px;
+      object-fit: contain; /* Ensure logo fits */
+    }
+
+    header h1 {
+      flex: 2;
+      margin: 0 20px;
+      font-size: 36px;
+      color: #ffcb05;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3); /* Text shadow for heading */
+      min-width: 200px; /* Ensure heading doesn't shrink too much */
+    }
+
+    /* Search Bar */
+    .search-bar {
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+      max-width: 400px; /* Limit search bar width */
+      margin: 10px 0; /* Add margin for responsiveness */
+    }
+
+    .search-bar input {
+      padding: 12px 18px; /* Larger padding */
+      border: 3px solid #ffcb05;
+      border-radius: 25px 0 0 25px;
+      width: calc(100% - 50px); /* Adjust width for button */
+      outline: none;
+      font-size: 16px;
+      transition: all 0.3s ease; /* Smooth transition */
+    }
+
+    .search-bar input:focus {
+      border-color: #0e73df; /* Highlight on focus */
+      box-shadow: 0 0 8px rgba(14, 115, 223, 0.5);
+    }
+
+    .search-bar button {
+      padding: 12px 15px; /* Larger padding */
+      border: none;
+      background: #ffcb05;
+      color: #0e73df;
+      border-radius: 0 25px 25px 0;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.3s ease, transform 0.2s ease; /* Smooth transition */
+    }
+
+    .search-bar button:hover {
+      background: #e6b800; /* Darker yellow on hover */
+      transform: translateY(-2px); /* Slight lift effect */
+    }
+
+    /* Cart Container */
+    #cart-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      margin-left: 20px; /* Increased margin */
+      transition: transform 0.2s ease;
+    }
+
+    #cart-container:hover {
+      transform: scale(1.05); /* Slight zoom on hover */
+    }
+
+    #cart-icon-img {
+      width: 32px; /* Larger icon */
+      height: 32px;
+    }
+
+    #cart-count {
+      position: absolute;
+      top: -8px; /* Adjusted position */
+      right: -10px; /* Adjusted position */
+      background: #28a745; /* Green for count */
+      color: white;
+      font-size: 13px; /* Slightly larger font */
+      padding: 3px 7px; /* More padding */
+      border-radius: 50%;
+      min-width: 20px; /* Ensure circular shape */
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    /* Google Login Button */
+    #googleLoginBtn {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 15px; /* Larger padding */
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px; /* More rounded corners */
+      cursor: pointer;
+      font-size: 15px;
+      margin-left: 20px;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    #googleLoginBtn:hover {
+      background: #f0f0f0;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    #googleLoginBtn img {
+      width: 22px; /* Larger icon */
+      margin-right: 10px;
+    }
+
+    /* Profile Container */
+    #profileContainer {
+      position: relative;
+      display: inline-block;
+      margin-left: 20px;
+    }
+
+    #profilePic {
+      width: 40px; /* Larger profile picture */
+      height: 40px;
+      border-radius: 50%;
+      border: 3px solid #ffcb05; /* Thicker border */
+      cursor: pointer;
+      object-fit: cover; /* Ensure image covers the area */
+      transition: border-color 0.3s ease, transform 0.2s ease;
+    }
+
+    #profilePic:hover {
+      border-color: #0e73df; /* Change border color on hover */
+      transform: scale(1.05);
+    }
+
+    #profilePopup {
+      position: absolute;
+      top: 100%; /* Position below the profile pic */
+      right: 0; /* Align to the right of the profile pic */
+      background: #0e1a40;
+      color: #ffcb05;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.5); /* Stronger shadow */
+      display: none;
+      width: 150px; /* Wider popup */
+      padding: 10px;
+      z-index: 20;
+      transform-origin: top right; /* For animation */
+      animation: fadeInScale 0.2s ease-out forwards; /* Fade-in animation */
+    }
+
+    @keyframes fadeInScale {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    #profilePopup button {
+      width: 100%;
+      background: #ffcb05;
+      color: #0e73df;
+      border: none;
+      border-radius: 8px;
+      padding: 10px; /* More padding */
+      margin: 5px 0;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    #profilePopup button:hover {
+      background: #e6b800;
+      transform: translateY(-1px);
+    }
+
+    /* Modals (Cart Popup, Login Prompt, AI Q&A, Review Summarizer, Gift Finder, Product Compare) */
+    #popupCart, #loginPrompt, #aiQAModal, #reviewSummarizerModal, #giftFinderModal, #productCompareModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .popup-content {
+      background: #1a1a2e;
+      color: #ffcb05;
+      padding: 30px;
+      border-radius: 15px;
+      text-align: center;
+      max-width: 350px; /* Slightly wider */
+      width: 90%;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.6); /* Stronger shadow */
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(-50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .popup-content h2 {
+      margin-top: 0;
+      font-size: 24px;
+      color: #ffcb05;
+    }
+
+    .popup-content .btn {
+      width: 100%;
+      margin-top: 15px;
+      background: #ffcb05;
+      color: #0e73df;
+      border: none;
+      padding: 12px; /* More padding */
+      border-radius: 8px;
+      font-size: 17px; /* Larger font */
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .popup-content .btn:hover {
+      background: #e6b800;
+      transform: translateY(-2px);
+    }
+
+    /* AI Q&A, Review Summarizer, Gift Finder, Product Compare Specific Styles */
+    #aiQAModal .popup-content,
+    #reviewSummarizerModal .popup-content,
+    #giftFinderModal .popup-content,
+    #productCompareModal .popup-content {
+        max-width: 500px; /* Wider for chat/summary/gift finder/compare */
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+    }
+    #aiQAModal .popup-content h2,
+    #reviewSummarizerModal .popup-content h2,
+    #giftFinderModal .popup-content h2,
+    #productCompareModal .popup-content h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    #aiQAModal .product-qa-info,
+    #reviewSummarizerModal .product-summary-info,
+    #giftFinderModal .gift-finder-info,
+    #productCompareModal .compare-info {
+        font-size: 14px;
+        color: #ccc;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+    #aiQAModal #qaResponse,
+    #reviewSummarizerModal #reviewSummaryOutput,
+    #giftFinderModal #giftSuggestionsOutput,
+    #productCompareModal #compareOutput {
+        background: #0e1a40;
+        color: #fff;
+        padding: 15px;
+        border-radius: 8px;
+        min-height: 100px;
+        max-height: 250px;
+        overflow-y: auto;
+        margin-bottom: 15px;
+        font-size: 15px;
+        white-space: pre-wrap; /* Preserve whitespace and line breaks */
+        text-align: left;
+    }
+    #aiQAModal #qaInput,
+    #giftFinderModal #giftDescriptionInput,
+    #productCompareModal #compareInput {
+        width: calc(100% - 20px);
+        padding: 10px;
+        border: 1px solid #ffcb05;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        background: #0e1a40;
+        color: #fff;
+        font-size: 15px;
+    }
+    #aiQAModal #qaInput::placeholder,
+    #giftFinderModal #giftDescriptionInput::placeholder,
+    #productCompareModal #compareInput::placeholder {
+        color: #aaa;
+    }
+    #aiQAModal .qa-buttons,
+    #reviewSummarizerModal .summary-buttons,
+    #giftFinderModal .gift-finder-buttons,
+    #productCompareModal .compare-buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end; /* Align buttons to the right */
+    }
+    #aiQAModal .qa-buttons .btn,
+    #reviewSummarizerModal .summary-buttons .btn,
+    #giftFinderModal .gift-finder-buttons .btn,
+    #productCompareModal .compare-buttons .btn {
+        width: auto; /* Allow buttons to size naturally */
+        flex-grow: 1;
+        margin-top: 0;
+        padding: 10px 20px;
+    }
+    #aiQAModal #qaLoading,
+    #reviewSummarizerModal #summaryLoading,
+    #giftFinderModal #giftFinderLoading,
+    #productCompareModal #compareLoading {
+        text-align: center;
+        color: #ffcb05;
+        margin-top: 10px;
+        display: none;
+    }
+
+
+    /* Product Container */
+    .product-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Larger min-width for cards */
+      gap: 25px; /* Increased gap */
+      margin: 25px; /* Increased margin */
+      flex: 1;
+      justify-content: center; /* Center cards horizontally */
+    }
+
+    /* Product Card */
+    .product-card {
+      background: #fff;
+      border-radius: 15px; /* More rounded */
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15); /* Stronger shadow */
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
+    }
+
+    .product-card:hover {
+      transform: translateY(-8px); /* Lift effect on hover */
+      box-shadow: 0 12px 30px rgba(0,0,0,0.25); /* Even stronger shadow */
+    }
+
+    .product-image img {
+      width: 100%;
+      height: 250px; /* Taller images */
+      object-fit: cover;
+      border-bottom: 1px solid #eee;
+    }
+
+    .product-info {
+      padding: 15px; /* More padding */
+      text-align: center;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between; /* Distribute content vertically */
+    }
+
+    .product-info h3 {
+      margin: 10px 0;
+      color: #1f3b72; /* Dark blue for product name */
+      font-size: 20px; /* Larger font */
+      font-weight: 600;
+    }
+
+    .price {
+      font-size: 20px; /* Larger font */
+      margin-bottom: 15px;
+      color: #e44d26; /* Orange-red for price */
+      font-weight: 700;
+    }
+
+    /* Buttons */
+    .btn, .btn-cart, .btn-ai, .btn-summarize, .btn-gift-finder, .btn-compare {
+      margin: 8px; /* More margin */
+      padding: 12px 25px; /* More padding */
+      border-radius: 25px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease, border-color 0.3s ease, color 0.3s ease;
+      font-weight: 600;
+      flex-shrink: 0; /* Prevent buttons from shrinking */
+    }
+
+    .btn {
+      background: #1f3b72;
+      color: #fff;
+      border: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .btn:hover {
+      background: #4e73df;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+    }
+
+    .btn-cart {
+      background: transparent;
+      border: 2px solid #ffcb05;
+      color: #ffcb05;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .btn-cart:hover {
+      background: #ffcb05;
+      color: #0e73df;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+    }
+
+    .btn-ai {
+        background: #5a2a8a; /* A distinct color for AI button */
+        color: #fff;
+        border: none;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .btn-ai:hover {
+        background: #7b3eaf;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+    }
+
+    .btn-summarize {
+        background: #007bff; /* Blue for summarize button */
+        color: #fff;
+        border: none;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .btn-summarize:hover {
+        background: #0056b3;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+    }
+
+    .btn-gift-finder {
+        background: #28a745; /* Green for gift finder button */
+        color: #fff;
+        border: none;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        margin-left: 20px; /* Add margin to separate from search */
+    }
+
+    .btn-gift-finder:hover {
+        background: #218838;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+    }
+
+    .btn-compare {
+        background: #ffc107; /* Yellow for compare button */
+        color: #333;
+        border: none;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        margin-left: 10px; /* Add margin */
+    }
+
+    .btn-compare:hover {
+        background: #e0a800;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+    }
+
+
+    #loading, #offlineMsg, #noResultsMsg {
+      text-align: center;
+      padding: 20px;
+      font-weight: bold;
+      color: #fff; /* White text for messages */
+      font-size: 18px;
+    }
+
+    #offlineMsg {
+      display: none;
+      color: #ff4d4d; /* Red for offline message */
+    }
+
+    #noResultsMsg {
+        display: none; /* Hidden by default */
+        color: #ffcb05;
+    }
+
+    /* Footer */
+    footer {
+      background: #0e1a40;
+      color: #fff;
+      text-align: center;
+      padding: 20px 0;
+      border-top: 4px solid #ffcb05;
+      margin-top: auto;
+      font-size: 15px;
+    }
+
+    footer a {
+      color: #ffcb05;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    footer a:hover {
+      color: #e6b800;
+      text-decoration: underline;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+      }
+      header h1 {
+        font-size: 30px;
+        margin: 10px 0;
+      }
+      .search-bar {
+        width: 100%;
+        max-width: 90%;
+        margin-bottom: 10px;
+      }
+      .search-bar input {
+        width: calc(100% - 60px); /* Adjust for clear button */
+      }
+      #cart-container, #googleLoginBtn, #profileContainer, .btn-gift-finder, .btn-compare {
+        margin: 10px 0;
+      }
+      .product-container {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Smaller min-width for mobile */
+        gap: 15px;
+        margin: 15px;
+      }
+      .product-image img {
+        height: 200px; /* Shorter images on mobile */
+      }
+      #aiQAModal .popup-content,
+      #reviewSummarizerModal .popup-content,
+      #giftFinderModal .popup-content,
+      #productCompareModal .popup-content {
+          max-width: 95%;
+          padding: 20px;
+      }
+      #aiQAModal #qaInput,
+      #giftFinderModal #giftDescriptionInput,
+      #productCompareModal #compareInput {
+          width: calc(100% - 20px);
+      }
+    }
+
+    @media (max-width: 480px) {
+      header h1 {
+        font-size: 24px;
+      }
+      .search-bar input {
+        font-size: 14px;
+        padding: 10px 15px;
+      }
+      .search-bar button {
+        font-size: 14px;
+        padding: 10px 12px;
+      }
+      .product-info h3 {
+        font-size: 18px;
+      }
+      .price {
+        font-size: 18px;
+      }
+      .btn, .btn-cart, .btn-ai, .btn-summarize, .btn-gift-finder, .btn-compare {
+        padding: 10px 20px;
+        font-size: 14px;
+      }
+      .popup-content {
+        padding: 20px;
+      }
+      .popup-content h2 {
+        font-size: 20px;
+      }
+      .popup-content .btn {
+        padding: 10px;
+        font-size: 15px;
+      }
+    }
+
+    /* --- Mangekyō & Genjutsu Effects --- */
+    #mangekyoOverlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(30, 0, 0, 0.9);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1100;
+      animation: fadeIn 0.3s ease-out;
+    }
+    #mangekyoOverlay.active { display: flex; }
+    #mangekyoOverlay img {
+      width: 180px; height: 180px; pointer-events: none;
+      animation: mangekyoAnim 2s ease-out forwards;
+    }
+    @keyframes mangekyoAnim {
+      from { transform: scale(0) rotate(0deg); opacity: 0; }
+      to { transform: scale(2) rotate(360deg); opacity: 1; }
+    }
+    @keyframes sharinganRotate {
+      from   { transform: scale(1) rotate(0deg); }
+      to     { transform: scale(6) rotate(360deg); }
+    }
+
+    #genjutsuGlitch.active #sharinganZoom {
+      opacity: 1;
+      animation: sharinganRotate 2.5s ease forwards;
+    }
+
+    #genjutsuFlash {
+      position: fixed; top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: white; opacity: 0;
+      pointer-events: none; z-index: 9999;
+      transition: opacity 0.1s ease;
+    }
+
+    #genjutsuGlitch {
+      position: fixed; top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(255, 0, 0, 0.1);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; z-index: 9998;
+      animation: none;
+    }
+
+    #sharinganZoom {
+      width: 80px; opacity: 0; transform: scale(1);
+      transition: transform 2.5s ease, opacity 0.4s ease;
+    }
+
+    #genjutsuGlitch.active {
+      opacity: 1;
+      animation: glitchEffect 0.4s linear infinite;
+    }
+    #genjutsuGlitch.active #sharinganZoom {
+      opacity: 3;
+      transform: scale(6);
+    }
+    @keyframes glitchEffect {
+      0% { background: rgba(255,0,0,0.05); }
+      50% { background: rgba(255,0,0,0.2); }
+      100% { background: rgba(255,0,0,0.05); }
+    }
+
+    /* Clear Search Button */
+    .search-input-wrapper {
+        position: relative;
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+    }
+
+    #clearSearchBtn {
+        position: absolute;
+        right: 55px; /* Position next to the search button */
+        background: none;
+        border: none;
+        color: #888;
+        font-size: 18px;
+        cursor: pointer;
+        padding: 5px;
+        display: none; /* Hidden by default */
+        transition: color 0.2s ease;
+    }
+
+    #clearSearchBtn:hover {
+        color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="popupCart">
+    <div class="popup-content">
+      <h2>Item Added to Cart!</h2>
+      <button class="btn go-to-cart">Go to Cart</button>
+      <button class="btn" onclick="closeCartPopup()">Continue Shopping</button>
+    </div>
+  </div>
+
+  <div id="loginPrompt">
+    <div class="popup-content">
+      <h2>Please Login to Buy Product</h2>
+      <button class="btn" onclick="signInWithGoogle()">Login</button>
+      <button class="btn" onclick="closeLoginPrompt()">Back</button>
+    </div>
+  </div>
+
+  <div id="aiQAModal">
+    <div class="popup-content">
+      <h2 id="qaProductName">Ask AI about Product</h2>
+      <p class="product-qa-info" id="qaProductInfo"></p>
+      <div id="qaResponse"></div>
+      <input type="text" id="qaInput" placeholder="Ask a question about this product...">
+      <div class="qa-buttons">
+        <button class="btn" id="sendQAButton">Send</button>
+        <button class="btn" id="closeQAButton">Close</button>
+      </div>
+      <div id="qaLoading">Thinking...</div>
+    </div>
+  </div>
+
+  <div id="reviewSummarizerModal">
+    <div class="popup-content">
+      <h2 id="summaryProductName">Review Summary for Product</h2>
+      <p class="product-summary-info" id="summaryProductInfo"></p>
+      <div id="reviewSummaryOutput"></div>
+      <div class="summary-buttons">
+        <button class="btn" id="closeSummaryButton">Close</button>
+      </div>
+      <div id="summaryLoading">Generating summary...</div>
+    </div>
+  </div>
+
+  <div id="giftFinderModal">
+    <div class="popup-content">
+      <h2>✨ AI Gift Finder</h2>
+      <p class="gift-finder-info">Tell me about the person you're buying a gift for (e.g., "My dad, who loves gardening and coffee, budget around RS5000").</p>
+      <textarea id="giftDescriptionInput" placeholder="Describe the recipient and your preferences..."></textarea>
+      <div id="giftSuggestionsOutput"></div>
+      <div class="gift-finder-buttons">
+        <button class="btn" id="findGiftsButton">Find Gifts</button>
+        <button class="btn" id="closeGiftFinderButton">Close</button>
+      </div>
+      <div id="giftFinderLoading">Searching for gifts...</div>
+    </div>
+  </div>
+
+  <div id="productCompareModal">
+    <div class="popup-content">
+      <h2>✨ Product Compare</h2>
+      <p class="compare-info">Enter product names to compare (e.g., "Laptop A vs. Laptop B") or describe what you're looking for (e.g., "Best laptop for gaming under RS100,000").</p>
+      <textarea id="compareInput" placeholder="Enter product names or describe your needs..."></textarea>
+      <div id="compareOutput"></div>
+      <div class="compare-buttons">
+        <button class="btn" id="compareProductsButton">Compare/Recommend</button>
+        <button class="btn" id="closeCompareButton">Close</button>
+      </div>
+      <div id="compareLoading">Analyzing products...</div>
+    </div>
+  </div>
+
+  <div id="mangekyoOverlay"><img src="https://i.ibb.co/Wvt0zRS3/png-transparent-red-and-black-naruto-mangekyou-sharingan-eye-illustration-sasuke-uchiha-itachi-uchih.png" alt="Mangekyo Sharingan" /></div>
+  <div id="genjutsuFlash"></div>
+  <div id="genjutsuGlitch"><img src="https://i.ibb.co/Wvt0zRS3/png-transparent-red-and-black-naruto-mangekyou-sharingan-eye-illustration-sasuke-uchiha-itachi-uchih.png" alt="Sharingan" id="sharinganZoom"></div>
+  <audio id="bg-music-index" src="audio/part1.mp3" preload="auto"></audio>
+
+
+  <header>
+    <a href="index.html"><img src="https://i.ibb.co/9SPP0z5/image.png" class="logo" alt="Logo"></a>
+    <h1>ᴰᴵᱽᴵᴺᴱ Products</h1>
+    <div class="search-bar">
+      <div class="search-input-wrapper">
+        <input type="text" id="searchInput" placeholder="Search products…">
+        <button id="clearSearchBtn" title="Clear search">✖</button>
+      </div>
+      <button id="searchButton">Search</button>
+      <div id="cart-container" onclick="location.href='cart.html'">
+        <img src="https://cdn-icons-png.flaticon.com/512/2038/2038854.png" id="cart-icon-img" alt="Cart">
+        <span id="cart-count">0</span>
+      </div>
+    </div>
+    <button class="btn-gift-finder" id="giftFinderBtn">✨ Gift Finder</button>
+    <button class="btn-compare" id="productCompareBtn">✨ Product Compare</button>
+    <button id="googleLoginBtn" onclick="signInWithGoogle()">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"> Sign in with Google
+    </button>
+    <div id="profileContainer">
+      <img id="profilePic" src="" alt="Profile">
+      <div id="profilePopup">
+        <button id="switchAccountBtn">Switch Account</button><br>
+        <button id="logoutBtn">Logout</button><br>
+        <button id="closeProfilePopupBtn">Close</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div id="offlineMsg">You are offline. Some features may not work.</div>
+    <div id="loading">Loading products...</div>
+    <div id="noResultsMsg">No products found matching your search.</div>
+    <div class="product-container"></div>
+  </main>
+
+  <footer>
+    &copy; 2025 Sadwal's Best Store | <a href="terms.html">Terms of Service</a>
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import {
+      getAuth, onAuthStateChanged, signInWithPopup,
+      GoogleAuthProvider, signOut, setPersistence,
+      browserLocalPersistence
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import {
+      getFirestore, collection, getDocs,
+      doc, getDoc, setDoc, addDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    // Firebase configuration (replace with your actual config)
+    const firebaseConfig = {
+      apiKey: "AIzaSyCXJiBXLNVnk0TSigI2bDA9kG4MgrXEQ40",
+      authDomain: "my-store-a881a.firebaseapp.com",
+      projectId: "my-store-a881a",
+      storageBucket: "my-store-a881a.appspot.com",
+      messagingSenderId: "749092459183",
+      appId: "1:749092459183:web:44afb5c6a91d2a787eba5a",
+      measurementId: "G-FLDGL3JF38"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let allProducts = []; // Store all fetched products for client-side filtering
+    let currentAIProduct = null; // To store the product being asked about for Q&A
+    let currentProductForSummary = null; // To store the product for review summary
+
+    // Google Sign-In
+    async function signInWithGoogle() {
+      try {
+        await setPersistence(auth, browserLocalPersistence);
+        await signInWithPopup(auth, new GoogleAuthProvider());
+      } catch (e) {
+        console.error("Login failed:", e);
+        // Use a custom modal or message box instead of alert
+        showCustomMessage("Login failed: " + e.message);
+      }
+    }
+    window.signInWithGoogle = signInWithGoogle; // Make accessible globally
+
+    // Custom Message Box (replaces alert)
+    function showCustomMessage(message) {
+        const msgBox = document.createElement('div');
+        msgBox.style.cssText = `
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: #1a1a2e; color: #ffcb05; padding: 20px; border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index: 2000; text-align: center;
+            max-width: 300px; width: 80%;
+        `;
+        msgBox.innerHTML = `
+            <p>${message}</p>
+            <button style="background: #ffcb05; color: #0e73df; border: none; padding: 8px 15px;
+            border-radius: 5px; cursor: pointer; margin-top: 10px;">OK</button>
+        `;
+        document.body.appendChild(msgBox);
+        msgBox.querySelector('button').onclick = () => msgBox.remove();
+    }
+    window.showCustomMessage = showCustomMessage; // Make accessible globally
+
+    // Profile Popup Logic
+    const profilePic = document.getElementById("profilePic");
+    const profilePopup = document.getElementById("profilePopup");
+    const closeProfilePopupBtn = document.getElementById("closeProfilePopupBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const switchAccountBtn = document.getElementById("switchAccountBtn");
+
+    function toggleProfilePopup() {
+      profilePopup.style.display = profilePopup.style.display === "block" ? "none" : "block";
+    }
+
+    profilePic.addEventListener("click", toggleProfilePopup);
+    closeProfilePopupBtn.addEventListener("click", () => {
+      profilePopup.style.display = "none";
+    });
+
+    logoutBtn.addEventListener("click", () => {
+      profilePopup.style.display = "none";
+      signOut(auth).then(() => {
+        showCustomMessage("Logged out successfully.");
+      }).catch(console.error);
+    });
+
+    switchAccountBtn.addEventListener("click", () => {
+      showCustomMessage("Switch Account clicked (implement logic here)");
+      profilePopup.style.display = "none";
+    });
+
+    // Auth State Change Listener
+    onAuthStateChanged(auth, (user) => {
+      const profileContainer = document.getElementById("profileContainer");
+      const googleLoginBtn = document.getElementById("googleLoginBtn");
+
+      if (user) {
+        profilePic.src = user.photoURL || 'https://placehold.co/40x40/cccccc/333333?text=User'; // Placeholder if no photo
+        profileContainer.style.display = "inline-block";
+        googleLoginBtn.style.display = "none";
+        updateCartCount();
+      } else {
+        profilePic.src = "";
+        profileContainer.style.display = "none";
+        googleLoginBtn.style.display = "inline-flex";
+      }
+    });
+
+    // Fetch and render products
+    async function fetchProducts() {
+      document.getElementById("loading").style.display = "block";
+      document.getElementById("noResultsMsg").style.display = "none";
+      const container = document.querySelector(".product-container");
+      container.innerHTML = ""; // Clear previous products
+
+      try {
+        const snap = await getDocs(collection(db, "products"));
+        if (snap.empty) {
+          container.innerHTML = "<p>No products available.</p>";
+          allProducts = [];
+        } else {
+          allProducts = snap.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+          renderProducts(allProducts); // Render all products initially
+        }
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        container.innerHTML = "<p>Error loading products.</p>";
+        allProducts = [];
+      } finally {
+        document.getElementById("loading").style.display = "none";
+      }
+    }
+
+    // Render products to the DOM
+    function renderProducts(productsToRender) {
+      const container = document.querySelector(".product-container");
+      container.innerHTML = ""; // Clear existing products
+      if (productsToRender.length === 0) {
+        document.getElementById("noResultsMsg").style.display = "block";
+      } else {
+        document.getElementById("noResultsMsg").style.display = "none";
+        productsToRender.forEach(p => {
+          const imageUrl = p.imageUrl?.trim() || 'https://placehold.co/250x250/cccccc/333333?text=No+Image'; // Placeholder for missing image
+          const card = document.createElement("div");
+          card.className = "product-card";
+          card.innerHTML = `
+            <div class="product-image">
+              <img src="${imageUrl}" alt="${p.name}" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/250x250/cccccc/333333?text=No+Image';">
+            </div>
+            <div class="product-info">
+              <h3>${p.name}</h3>
+              <p class="price"><strong>RS${p.price}</strong></p>
+              <button class="btn buy-now">Buy Now</button>
+              <button class="btn-cart">Add to Cart</button>
+              <button class="btn-ai ask-ai-btn" data-product-id="${p.id}">✨ Ask AI</button>
+              <button class="btn-summarize summarize-reviews-btn" data-product-id="${p.id}">✨ Summarize Reviews</button>
+            </div>
+          `;
+          container.appendChild(card);
+          card.querySelector(".btn-cart").addEventListener("click", () => addToCart(p));
+          card.querySelector(".buy-now").addEventListener("click", () => instantCheckout(p));
+          card.querySelector(".ask-ai-btn").addEventListener("click", () => openAIQAModal(p));
+          card.querySelector(".summarize-reviews-btn").addEventListener("click", () => openReviewSummarizerModal(p));
+        });
+      }
+    }
+
+    // Search Functionality (Debounced)
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+    const clearSearchBtn = document.getElementById('clearSearchBtn');
+
+    let searchTimeout;
+    const debounceDelay = 300; // milliseconds
+
+    function performSearch() {
+      const searchTerm = searchInput.value.toLowerCase().trim();
+      clearTimeout(searchTimeout); // Clear any existing timeout
+
+      searchTimeout = setTimeout(() => {
+        const filteredProducts = allProducts.filter(p =>
+          p.name.toLowerCase().includes(searchTerm) ||
+          (p.description && p.description.toLowerCase().includes(searchTerm)) // Assuming products have a description
+        );
+        renderProducts(filteredProducts);
+        clearSearchBtn.style.display = searchTerm ? 'block' : 'none'; // Show/hide clear button
+      }, debounceDelay);
+    }
+
+    searchInput.addEventListener('input', performSearch);
+    searchButton.addEventListener('click', performSearch);
+    clearSearchBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        performSearch(); // Re-render with all products
+    });
+
+
+    // Add to Cart
+    async function addToCart(product) {
+      const user = auth.currentUser;
+      if (!user) {
+        document.getElementById("loginPrompt").style.display = "flex";
+        return;
+      }
+      document.getElementById("popupCart").style.display = "flex";
+      const cartRef = doc(db, "cart-orders", user.uid);
+      try {
+        const snap = await getDoc(cartRef);
+        const items = snap.exists() ? snap.data().items || [] : [];
+        const idx = items.findIndex(i => i.id === product.id);
+        if (idx > -1) {
+          items[idx].quantity += 1;
+        } else {
+          items.push({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            imageUrl: product.imageUrl || 'https://placehold.co/250x250/cccccc/333333?text=No+Image',
+            quantity: 1
+          });
+        }
+        await setDoc(cartRef, { items, userId: user.uid }, { merge: true });
+        updateCartCount();
+      } catch (e) {
+        console.error("Cart Error:", e);
+        showCustomMessage("Failed to add to cart: " + e.message);
+      }
+    }
+
+    // Update cart count
+    function updateCartCount() {
+      const user = auth.currentUser;
+      if (!user) {
+        document.getElementById("cart-count").textContent = "0"; // Reset count if logged out
+        return;
+      }
+      getDoc(doc(db, "cart-orders", user.uid)).then(snap => {
+        const items = snap.exists() ? snap.data().items || [] : [];
+        const count = items.reduce((sum, i) => sum + i.quantity, 0);
+        document.getElementById("cart-count").textContent = count;
+      }).catch(e => {
+        console.error("Error updating cart count:", e);
+        document.getElementById("cart-count").textContent = "!"; // Indicate error
+      });
+    }
+
+    // Instant Checkout
+    async function instantCheckout(product) {
+      const user = auth.currentUser;
+      if (!user) {
+        document.getElementById("loginPrompt").style.display = "flex";
+        return;
+      }
+
+      // 1. Fetch the full product document to get imageUrl
+      const prodRef = doc(db, "products", product.id);
+      const prodSnap = await getDoc(prodRef);
+      if (!prodSnap.exists()) {
+        showCustomMessage("Product data missing!");
+        return;
+      }
+      const fullProduct = prodSnap.data();
+
+      // 2. Write the checkout doc, including imageUrl from Firestore
+      const checkoutRef = await addDoc(collection(db, "instant-checkouts"), {
+        userId:        user.uid,
+        email:         user.email,
+        productName:   fullProduct.name,
+        productPrice:  fullProduct.price,
+        quantity:      1,
+        imageUrl:      fullProduct.imageUrl || 'https://placehold.co/250x250/cccccc/333333?text=No+Image',
+        createdAt:     new Date()
+      });
+
+      // 3. Redirect to the checkout page
+      window.location.href = `instant-buy.html?checkoutId=${checkoutRef.id}`;
+    }
+
+    // Close Cart Popup
+    window.closeCartPopup = () => {
+      document.getElementById("popupCart").style.display = "none";
+    };
+
+    // Close Login Prompt
+    window.closeLoginPrompt = () => {
+      document.getElementById("loginPrompt").style.display = "none";
+    };
+
+    // Online/Offline status
+    function checkOnlineStatus() {
+      document.getElementById("offlineMsg").style.display = navigator.onLine ? "none" : "block";
+    }
+    window.addEventListener("online", checkOnlineStatus);
+    window.addEventListener("offline", checkOnlineStatus);
+    checkOnlineStatus(); // Initial check
+
+    // Genjutsu transition
+    const goToCartBtn = document.querySelector(".go-to-cart");
+    const flash = document.getElementById("genjutsuFlash");
+    const glitch = document.getElementById("genjutsuGlitch");
+    const music = document.getElementById("bg-music-index");
+
+    if (goToCartBtn) {
+      goToCartBtn.addEventListener("click", () => {
+        document.getElementById("popupCart").style.display = "none";
+        // Flash
+        flash.style.opacity = 1;
+        setTimeout(() => flash.style.opacity = 0, 100);
+        // Glitch & zoom
+        glitch.classList.add("active");
+        // Sound
+        if (music) { // Check if music element exists
+          music.currentTime = 0;
+          music.play().catch(e => console.warn("Audio error:", e));
+        }
+        // Redirect
+        setTimeout(() => window.location.href = "cart.html", 2700);
+      });
+    }
+
+    // --- AI Q&A Feature (Gemini API Integration) ---
+    const aiQAModal = document.getElementById('aiQAModal');
+    const qaProductName = document.getElementById('qaProductName');
+    const qaProductInfo = document.getElementById('qaProductInfo');
+    const qaResponse = document.getElementById('qaResponse');
+    const qaInput = document.getElementById('qaInput');
+    const sendQAButton = document.getElementById('sendQAButton');
+    const closeQAButton = document.getElementById('closeQAButton');
+    const qaLoading = document.getElementById('qaLoading');
+
+    // Opens the AI Q&A modal for a specific product
+    function openAIQAModal(product) {
+        currentAIProduct = product; // Store the product globally for the modal
+        qaProductName.textContent = `Ask AI about "${product.name}"`;
+        qaProductInfo.textContent = `Price: RS${product.price}`;
+        if (product.description) {
+            qaProductInfo.textContent += ` | Description: ${product.description.substring(0, 50)}...`; // Show a snippet
+        }
+        qaResponse.textContent = 'Hello! How can I help you with this product?'; // Initial greeting
+        qaInput.value = ''; // Clear previous input
+        qaLoading.style.display = 'none'; // Hide loading
+        aiQAModal.style.display = 'flex'; // Show modal
+    }
+
+    // Closes the AI Q&A modal
+    closeQAButton.addEventListener('click', () => {
+        aiQAModal.style.display = 'none';
+        currentAIProduct = null; // Clear the current product
+    });
+
+    // Handles sending the question to the Gemini API
+    sendQAButton.addEventListener('click', async () => {
+        const userQuestion = qaInput.value.trim();
+        if (!userQuestion || !currentAIProduct) {
+            showCustomMessage("Please enter a question or select a product first.");
+            return;
+        }
+
+        qaResponse.textContent = ''; // Clear previous response
+        qaLoading.style.display = 'block'; // Show loading indicator
+        sendQAButton.disabled = true; // Disable send button
+        qaInput.disabled = true; // Disable input
+
+        try {
+            // Construct the prompt for the LLM
+            let prompt = `You are a helpful product assistant for an e-commerce store.
+            Given the following product information, answer the user's question.
+            Product Name: ${currentAIProduct.name}
+            Product Price: RS${currentAIProduct.price}`;
+
+            if (currentAIProduct.description) {
+                prompt += `\nProduct Description: ${currentAIProduct.description}`;
+            }
+
+            prompt += `\n\nUser's Question: ${userQuestion}`;
+
+            // Make the API call to Gemini
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+            const payload = { contents: chatHistory };
+            const apiKey = ""; // Canvas will automatically provide this
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            if (result.candidates && result.candidates.length > 0 &&
+                result.candidates[0].content && result.candidates[0].content.parts &&
+                result.candidates[0].content.parts.length > 0) {
+                const aiAnswer = result.candidates[0].content.parts[0].text;
+                qaResponse.textContent = aiAnswer;
+            } else {
+                qaResponse.textContent = "Sorry, I couldn't get a response from the AI. Please try again.";
+                console.error("Gemini API response structure unexpected:", result);
+            }
+        } catch (error) {
+            console.error("Error calling Gemini API:", error);
+            qaResponse.textContent = "An error occurred while fetching the AI response. Please check your internet connection or try again later.";
+        } finally {
+            qaLoading.style.display = 'none'; // Hide loading
+            sendQAButton.disabled = false; // Re-enable send button
+            qaInput.disabled = false; // Re-enable input
+            qaInput.value = ''; // Clear input field
+        }
+    });
+
+    // --- Product Review Summarizer Feature (Gemini API Integration) ---
+    const reviewSummarizerModal = document.getElementById('reviewSummarizerModal');
+    const summaryProductName = document.getElementById('summaryProductName');
+    const summaryProductInfo = document.getElementById('summaryProductInfo');
+    const reviewSummaryOutput = document.getElementById('reviewSummaryOutput');
+    const closeSummaryButton = document.getElementById('closeSummaryButton');
+    const summaryLoading = document.getElementById('summaryLoading');
+
+    // Mocks some review data for demonstration. In a real app, you'd fetch this from Firestore.
+    function getMockReviewsForProduct(productId) {
+        const mockReviews = {
+            "product1": [
+                "This product is amazing! I love its features and it's very durable.",
+                "Good value for money, but the battery life could be better.",
+                "Absolutely fantastic! Exceeded my expectations. Highly recommend.",
+                "It's okay, nothing special. The design is a bit bland.",
+                "Very happy with this purchase. Works perfectly as described."
+            ],
+            "product2": [
+                "Great quality and comfortable to use. A bit pricey though.",
+                "I'm disappointed. It broke after a week of light use.",
+                "Excellent product, very innovative and easy to set up.",
+                "The color is not as vibrant as in the pictures, but it's functional.",
+                "Customer service was great when I had an issue. Product itself is decent."
+            ],
+            "product3": [
+                "Best purchase this year! So versatile and powerful.",
+                "It's good, but I expected more given the price. Performance is average.",
+                "Highly recommended for anyone looking for reliability and speed.",
+                "A bit too bulky for my liking, but it gets the job done.",
+                "Five stars! Flawless performance and sleek design."
+            ],
+            // Add more mock reviews for other products as needed.
+            // These mock product IDs (product1, product2, product3) should match actual product IDs in your Firestore 'products' collection
+            // for the feature to work with real product data if you were to implement fetching reviews from Firestore.
+        };
+        return mockReviews[productId] || ["No reviews available for this product yet."];
+    }
+
+    // Opens the Review Summarizer modal
+    function openReviewSummarizerModal(product) {
+        currentProductForSummary = product;
+        summaryProductName.textContent = `Summarized Reviews for "${product.name}"`;
+        summaryProductInfo.textContent = `Price: RS${product.price}`;
+        if (product.description) {
+            summaryProductInfo.textContent += ` | Description: ${product.description.substring(0, 50)}...`;
+        }
+        reviewSummaryOutput.textContent = ''; // Clear previous summary
+        summaryLoading.style.display = 'block'; // Show loading
+        reviewSummarizerModal.style.display = 'flex'; // Show modal
+
+        summarizeReviewsWithAI(product.id); // Call AI to summarize
+    }
+
+    // Closes the Review Summarizer modal
+    closeSummaryButton.addEventListener('click', () => {
+        reviewSummarizerModal.style.display = 'none';
+        currentProductForSummary = null;
+    });
+
+    // Calls Gemini API to summarize reviews
+    async function summarizeReviewsWithAI(productId) {
+        const reviews = getMockReviewsForProduct(productId);
+        const reviewsText = reviews.join("\n- "); // Format reviews for the prompt
+
+        let prompt = `Summarize the following customer reviews for the product "${currentProductForSummary.name}" into a concise paragraph, highlighting key pros and cons.
+        Reviews:
+        - ${reviewsText}`;
+
+        try {
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+            const payload = { contents: chatHistory };
+            const apiKey = ""; // Canvas will automatically provide this
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            if (result.candidates && result.candidates.length > 0 &&
+                result.candidates[0].content && result.candidates[0].content.parts &&
+                result.candidates[0].content.parts.length > 0) {
+                const aiSummary = result.candidates[0].content.parts[0].text;
+                reviewSummaryOutput.textContent = aiSummary;
+            } else {
+                reviewSummaryOutput.textContent = "Could not generate a summary. No reviews or unexpected AI response.";
+                console.error("Gemini API response structure unexpected for summary:", result);
+            }
+        } catch (error) {
+            console.error("Error calling Gemini API for summary:", error);
+            reviewSummaryOutput.textContent = "An error occurred while generating the summary. Please try again later.";
+        } finally {
+            summaryLoading.style.display = 'none'; // Hide loading
+        }
+    }
+
+    // --- AI Gift Finder Feature (Gemini API Integration) ---
+    const giftFinderModal = document.getElementById('giftFinderModal');
+    const giftFinderBtn = document.getElementById('giftFinderBtn');
+    const giftDescriptionInput = document.getElementById('giftDescriptionInput');
+    const giftSuggestionsOutput = document.getElementById('giftSuggestionsOutput');
+    const findGiftsButton = document.getElementById('findGiftsButton');
+    const closeGiftFinderButton = document.getElementById('closeGiftFinderButton');
+    const giftFinderLoading = document.getElementById('giftFinderLoading');
+
+    // Opens the Gift Finder modal
+    giftFinderBtn.addEventListener('click', () => {
+        giftDescriptionInput.value = ''; // Clear previous input
+        giftSuggestionsOutput.innerHTML = ''; // Clear previous suggestions
+        giftFinderLoading.style.display = 'none'; // Hide loading
+        giftFinderModal.style.display = 'flex'; // Show modal
+    });
+
+    // Closes the Gift Finder modal
+    closeGiftFinderButton.addEventListener('click', () => {
+        giftFinderModal.style.display = 'none';
+        // Re-render all products after closing the gift finder
+        renderProducts(allProducts);
+    });
+
+    // Handles finding gifts with AI
+    findGiftsButton.addEventListener('click', async () => {
+        const recipientDescription = giftDescriptionInput.value.trim();
+        if (!recipientDescription) {
+            showCustomMessage("Please describe the gift recipient.");
+            return;
+        }
+
+        giftSuggestionsOutput.innerHTML = ''; // Clear previous suggestions
+        giftFinderLoading.style.display = 'block'; // Show loading
+        findGiftsButton.disabled = true; // Disable button
+        giftDescriptionInput.disabled = true; // Disable input
+
+        const productNames = allProducts.map(p => p.name).join(", ");
+
+        try {
+            const prompt = `Based on the following description of a gift recipient and a list of available products, suggest up to 3 products from the list that would be suitable. Provide only the product names in a JSON array. If no suitable products are found, provide an empty array and a friendly message.
+
+            Recipient Description: ${recipientDescription}
+
+            Available Products: ${productNames}
+
+            Example JSON response:
+            {
+              "suggestedProducts": ["Product A", "Product B"],
+              "message": "Here are some gift ideas!"
+            }
+            `;
+
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+            const payload = {
+                contents: chatHistory,
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            "suggestedProducts": {
+                                "type": "ARRAY",
+                                "items": { "type": "STRING" },
+                                "description": "List of suggested product names"
+                            },
+                            "message": {
+                                "type": "STRING",
+                                "description": "A friendly message or explanation if no products are found"
+                            }
+                        },
+                        "propertyOrdering": ["suggestedProducts", "message"]
+                    }
+                }
+            };
+            const apiKey = ""; // Canvas will automatically provide this
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            if (result.candidates && result.candidates.length > 0 &&
+                result.candidates[0].content && result.candidates[0].content.parts &&
+                result.candidates[0].content.parts.length > 0) {
+                const jsonResponse = JSON.parse(result.candidates[0].content.parts[0].text);
+                const suggestedProductNames = jsonResponse.suggestedProducts || [];
+                const aiMessage = jsonResponse.message || "No specific message provided.";
+
+                if (suggestedProductNames.length > 0) {
+                    const suggestedProducts = allProducts.filter(p =>
+                        suggestedProductNames.some(name => p.name.toLowerCase() === name.toLowerCase())
+                    );
+
+                    if (suggestedProducts.length > 0) {
+                        giftSuggestionsOutput.innerHTML = `<p>${aiMessage}</p>`;
+                        renderProducts(suggestedProducts); // Display suggested products in main area
+                        giftFinderModal.style.display = 'none'; // Close modal after showing results
+                    } else {
+                        giftSuggestionsOutput.innerHTML = `<p>The AI suggested products that are not currently available. Please try a different description.</p>`;
+                        renderProducts(allProducts); // Show all products again
+                    }
+                } else {
+                    giftSuggestionsOutput.innerHTML = `<p>${aiMessage}</p>`;
+                    renderProducts(allProducts); // Show all products if no suggestions
+                }
+            } else {
+                giftSuggestionsOutput.innerHTML = "Sorry, I couldn't get gift suggestions from the AI. Please try again.";
+                console.error("Gemini API response structure unexpected for gift finder:", result);
+            }
+        } catch (error) {
+            console.error("Error calling Gemini API for gift finder:", error);
+            giftSuggestionsOutput.innerHTML = "An error occurred while finding gifts. Please check your internet connection or try again later.";
+        } finally {
+            giftFinderLoading.style.display = 'none'; // Hide loading
+            findGiftsButton.disabled = false; // Re-enable button
+            giftDescriptionInput.disabled = false; // Re-enable input
+        }
+    });
+
+    // --- Product Compare Feature (Gemini API Integration) ---
+    const productCompareModal = document.getElementById('productCompareModal');
+    const productCompareBtn = document.getElementById('productCompareBtn');
+    const compareInput = document.getElementById('compareInput');
+    const compareOutput = document.getElementById('compareOutput');
+    const compareProductsButton = document.getElementById('compareProductsButton');
+    const closeCompareButton = document.getElementById('closeCompareButton');
+    const compareLoading = document.getElementById('compareLoading');
+
+    // Opens the Product Compare modal
+    productCompareBtn.addEventListener('click', () => {
+        compareInput.value = ''; // Clear previous input
+        compareOutput.innerHTML = ''; // Clear previous output
+        compareLoading.style.display = 'none'; // Hide loading
+        productCompareModal.style.display = 'flex'; // Show modal
+    });
+
+    // Closes the Product Compare modal
+    closeCompareButton.addEventListener('click', () => {
+        productCompareModal.style.display = 'none';
+    });
+
+    // Handles product comparison/recommendation with AI
+    compareProductsButton.addEventListener('click', async () => {
+        const query = compareInput.value.trim();
+        if (!query) {
+            showCustomMessage("Please enter product names to compare or describe what you're looking for.");
+            return;
+        }
+
+        compareOutput.innerHTML = ''; // Clear previous output
+        compareLoading.style.display = 'block'; // Show loading
+        compareProductsButton.disabled = true; // Disable button
+        compareInput.disabled = true; // Disable input
+
+        // Prepare product data for the prompt
+        const availableProductDetails = allProducts.map(p =>
+            `Name: ${p.name}, Price: RS${p.price}${p.description ? `, Description: ${p.description}` : ''}`
+        ).join("\n- ");
+
+        try {
+            const prompt = `You are a helpful product comparison and recommendation assistant for an e-commerce store.
+            The user wants to compare products or get recommendations.
+            Here are the available products:
+            - ${availableProductDetails}
+
+            User's Query: ${query}
+
+            Please provide a concise comparison of the specified products, or recommend suitable products from the list based on the user's description. If comparing, highlight key differences and similarities. If recommending, explain why the suggested products fit the criteria. If a product mentioned by the user is not in the list, state that it's not found.`;
+
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+            const payload = { contents: chatHistory };
+            const apiKey = ""; // Canvas will automatically provide this
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            if (result.candidates && result.candidates.length > 0 &&
+                result.candidates[0].content && result.candidates[0].content.parts &&
+                result.candidates[0].content.parts.length > 0) {
+                const aiResponse = result.candidates[0].content.parts[0].text;
+                compareOutput.textContent = aiResponse;
+            } else {
+                compareOutput.textContent = "Sorry, I couldn't get a comparison/recommendation from the AI. Please try again.";
+                console.error("Gemini API response structure unexpected:", result);
+            }
+        } catch (error) {
+            console.error("Error calling Gemini API for comparison:", error);
+            compareOutput.textContent = "An error occurred while processing your request. Please check your internet connection or try again later.";
+        } finally {
+            compareLoading.style.display = 'none'; // Hide loading
+            compareProductsButton.disabled = false; // Re-enable button
+            compareInput.disabled = false; // Re-enable input
+        }
+    });
+
+
+    // Initial fetch of products when the page loads
+    fetchProducts();
+  </script>
+</body>
+</html>
